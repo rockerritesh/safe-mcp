@@ -26,17 +26,36 @@ The approach combines proactive token rotation (replacing tokens before expirati
 4. **Secure Refresh**: Refresh tokens are rotated with each access token renewal
 
 ### Architecture Components
+
+**Token Rotation and Invalidation Architecture:**
+
 ```
-[Client] --[Access Token]--> [Resource Server]
-    |                              |
-    |--[Refresh Request]--> [Authorization Server]
-    |                              |
-    +--[New Access Token] <--[Token Rotation]
-    
-[Security Monitor] --[Compromise Alert]--> [Token Revocation Service]
-    |                                              |
-    +--[Invalidation]--> [Authorization Server] <--[Token Blacklist]
+┌─────────────┐    ┌─────────────────────┐    ┌─────────────────┐
+│   Client    │───▶│ Resource Server     │    │ Security       │
+│             │    │                     │    │ Monitor        │
+│ • Uses      │    │ • Validates Access  │    │ • Detects      │
+│   Access    │    │   Token             │    │   Suspicious   │
+│   Token     │    │ • Grants Resource   │    │   Activity     │
+│             │    │   Access            │    │ • Triggers     │
+└─────────────┘    └─────────────────────┘    │   Alerts       │
+       │                       │              └─────────────────┘
+       │                       │                       │
+       ▼                       ▼                       ▼
+┌─────────────┐    ┌─────────────────────┐    ┌─────────────────┐
+│ Refresh     │    │ Authorization       │    │ Token           │
+│ Request     │───▶│ Server              │◀───│ Revocation     │
+│ • Automatic │    │ • Issues New        │    │ Service         │
+│ • Proactive │    │   Access Token      │    │ • Blacklists    │
+│ • Secure    │    │ • Rotates Refresh   │    │   Compromised   │
+│             │    │   Token             │    │   Tokens        │
+└─────────────┘    └─────────────────────┘    └─────────────────┘
 ```
+
+**Flow Description:**
+1. **Client** uses access token to access resources
+2. **Token Rotation** automatically refreshes tokens before expiry
+3. **Security Monitor** detects suspicious activity and triggers alerts
+4. **Revocation Service** immediately invalidates compromised tokens
 
 ### Prerequisites
 - OAuth 2.0 infrastructure with refresh token support

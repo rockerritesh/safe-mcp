@@ -27,15 +27,37 @@ PKCE works by requiring clients to generate a code verifier and code challenge p
 4. **Verification Enforcement**: Authorization server validates code verifier against challenge
 
 ### Architecture Components
+
+**PKCE (Proof Key for Code Exchange) Architecture:**
+
 ```
-[Client] --[Code Challenge]--> [Authorization Request] --> [Authorization Server]
-    |                                                           |
-    |--[Authorization Code] <--[Authorization Response] <--[Code Challenge Stored]
-    |                                                           |
-    +--[Code Verifier + Auth Code]--> [Token Request] --> [Token Endpoint]
-                                              |
-                                              +--[PKCE Validation]--> [Token Response]
+┌─────────────┐    ┌─────────────────────┐    ┌─────────────────┐
+│   Client    │───▶│ Authorization       │───▶│ Token          │
+│             │    │ Server              │    │ Endpoint       │
+│ • Generates │    │ • Stores Code       │    │ • Validates    │
+│   Code      │    │   Challenge         │    │   Code         │
+│   Verifier  │    │ • Issues Auth       │    │   Verifier     │
+│ • Creates   │    │   Code              │    │ • Issues       │
+│   Challenge │    │ • Binds Challenge   │    │   Access Token │
+└─────────────┘    └─────────────────────┘    └─────────────────┘
+       │                       │                       │
+       │                       │                       │
+       ▼                       ▼                       ▼
+┌─────────────┐    ┌─────────────────────┐    ┌─────────────────┐
+│ Code        │    │ Authorization       │    │ PKCE           │
+│ Verifier    │    │ Response            │    │ Validation     │
+│ • Random    │    │ • Auth Code         │    │ • Hash         │
+│ • Secure    │    │ • Redirect URI      │    │   Comparison   │
+│ • Stored    │    │ • State Parameter   │    │ • Security     │
+│   Locally   │    │                     │    │   Enforcement  │
+└─────────────┘    └─────────────────────┘    └─────────────────┘
 ```
+
+**Flow Description:**
+1. **Client** generates code verifier and creates code challenge
+2. **Authorization Server** stores challenge and issues authorization code
+3. **Token Endpoint** validates code verifier against stored challenge
+4. **Security** is enforced through cryptographic proof of code possession
 
 ### Prerequisites
 - OAuth 2.0 authorization server with PKCE support

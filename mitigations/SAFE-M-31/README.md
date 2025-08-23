@@ -25,13 +25,35 @@ PoP tokens work by requiring clients to demonstrate possession of a private key 
 3. **Client Authentication**: Tokens cannot be used without proper client authentication
 
 ### Architecture Components
+
+**PoP Token Flow Architecture:**
+
 ```
-[Client] --[Private Key]--> [PoP Token Request] --> [Authorization Server]
-    |                                                      |
-    |--[Signed Request]--> [Resource Server] <--[Token Validation]
-    |                                                      |
-    +--[Proof of Possession]--> [Access Granted]
+┌─────────────┐    ┌─────────────────────┐    ┌─────────────────┐
+│   Client    │───▶│ Authorization       │───▶│ Resource        │
+│             │    │ Server              │    │ Server          │
+│ • Private   │    │ • Validates PoP     │    │ • Verifies PoP  │
+│   Key       │    │   Token             │    │   Token        │
+│ • Generates │    │ • Issues Access     │    │ • Grants Access │
+│   PoP Token│    │   Token             │    │   if Valid      │
+└─────────────┘    └─────────────────────┘    └─────────────────┘
+       │                       │                       │
+       │                       │                       │
+       ▼                       ▼                       ▼
+┌─────────────┐    ┌─────────────────────┐    ┌─────────────────┐
+│ PoP Token   │    │ Access Token +      │    │ Resource        │
+│ Request     │    │ PoP Validation      │    │ Access          │
+│ • Signed    │    │ • Cryptographic     │    │ • Client-       │
+│ • Timestamp │    │   Signature Check   │    │   Specific      │
+│ • Nonce     │    │ • Binding Verify    │    │ • Secure        │
+└─────────────┘    └─────────────────────┘    └─────────────────┘
 ```
+
+**Flow Description:**
+1. **Client** generates PoP token using private key
+2. **Authorization Server** validates PoP token and issues access token
+3. **Resource Server** verifies PoP token before granting access
+4. **Security** is maintained through cryptographic binding at each step
 
 ### Prerequisites
 - OAuth 2.0 infrastructure supporting PoP tokens
