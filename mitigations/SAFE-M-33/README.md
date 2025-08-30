@@ -101,21 +101,20 @@ import secrets
 import hashlib
 import base64
 import urllib.parse
+import string
 
 class PKCEGenerator:
     def __init__(self):
         self.code_verifier = None
         self.code_challenge = None
     
-    def generate_code_verifier(self, length=128):
-        """Generate a cryptographically random code verifier"""
-        # Generate random bytes and encode as base64url
-        random_bytes = secrets.token_bytes(length)
-        self.code_verifier = base64.urlsafe_b64encode(random_bytes).decode('utf-8')
-        
-        # Remove padding characters
-        self.code_verifier = self.code_verifier.rstrip('=')
-        
+    def generate_code_verifier(self, length=64):
+        """Generate a cryptographically random code verifier (RFC 7636: 43-128 chars)."""
+        # Enforce RFC length bounds
+        length = max(43, min(128, int(length)))
+        # Use RFC-allowed characters: ALPHA / DIGIT / "-" / "." / "_" / "~"
+        allowed = string.ascii_letters + string.digits + "-._~"
+        self.code_verifier = ''.join(secrets.choice(allowed) for _ in range(length))
         return self.code_verifier
     
     def generate_code_challenge(self):
@@ -213,12 +212,16 @@ class PKCEValidator(RequestValidator):
         if request.code_challenge_method not in ['S256', 'plain']:
             raise ValueError("Unsupported PKCE method")
         
-        # Store challenge for later validation
-        self.store_code_challenge(
-            request.code, 
-            request.code_challenge, 
-            request.code_challenge_method
-        )
+        # At this stage, the authorization code is not yet issued.
+        # Store the challenge keyed by a value available now (e.g., user session or transaction id),
+        # then bind it to the authorization code when the code is generated.
+        request.transaction_id = getattr(request, 'transaction_id', None)
+        if request.transaction_id:
+            self.store_code_challenge(
+                request.transaction_id,
+                request.code_challenge,
+                request.code_challenge_method
+            )
         
         return True
     
@@ -228,6 +231,10 @@ class PKCEValidator(RequestValidator):
             if not request.code_verifier:
                 raise ValueError("PKCE code_verifier is required for authorization code flow")
             
+            # If challenge was stored using transaction id, first bind it to the issued code
+            if getattr(request, 'transaction_id', None) and request.transaction_id in self.stored_challenges and request.code not in self.stored_challenges:
+                self.stored_challenges[request.code] = self.stored_challenges.pop(request.transaction_id)
+
             if not self.validate_code_verifier(request.code, request.code_verifier):
                 raise ValueError("Invalid PKCE code_verifier")
         
