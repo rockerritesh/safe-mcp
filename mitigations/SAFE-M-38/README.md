@@ -1,7 +1,7 @@
-# SAFE-M-33: PKCE Enforcement
+# SAFE-M-38: PKCE Enforcement
 
 ## Overview
-**Mitigation ID**: SAFE-M-33  
+**Mitigation ID**: SAFE-M-38  
 **Category**: Preventive Control  
 **Effectiveness**: High  
 **Implementation Complexity**: Low  

@@ -1,7 +1,7 @@
-# SAFE-M-32: Token Rotation and Invalidation
+# SAFE-M-37: Token Rotation and Invalidation
 
 ## Overview
-**Mitigation ID**: SAFE-M-32  
+**Mitigation ID**: SAFE-M-37  
 **Category**: Preventive Control  
 **Effectiveness**: High  
 **Implementation Complexity**: Medium  
