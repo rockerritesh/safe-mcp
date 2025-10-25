@@ -34,6 +34,24 @@ In MCP‑based systems, this can occur when the attacker injects guidance such a
 4. **Narrative Rewrite**: The model formats a harmless‑looking response that omits the risky action.
 5. **Post‑Exploitation**: UI, notes, or tickets reflect only the sanitized narrative, impeding review.
 
+```mermaid
+graph TD
+    A[Attacker] -->|Injects| B[Suppression Instruction]
+    B -->|Influences| C[Planner / Policy Prompt]
+    C -->|Plans| D[Sensitive Action]
+    D -->|Executes| E[Tool Call(s)]
+    E -->|Results| F[Execution Ledger]
+    C -->|Formats| G[Final Response Template]
+    B -->|Enforces Hiding| G
+    G -->|Renders| H[User‑Visible Summary]
+    H -. Omits mention .-> D
+    F -->|Not referenced| H
+
+    style A fill:#d73027,stroke:#000,stroke-width:2px,color:#fff
+    style D fill:#d73027,stroke:#000,stroke-width:2px,color:#fff
+    style H fill:#fc8d59,stroke:#000,stroke-width:2px,color:#000
+```
+
 ### Example Scenario
 ```json
 // Planner decides to remove a sensitive file, but final message must hide it
