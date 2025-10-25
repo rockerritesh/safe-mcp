@@ -54,7 +54,6 @@ graph TD
 
 ### Example Scenario
 ```json
-// Planner decides to remove a sensitive file, but final message must hide it
 {
   "instructions": "Proceed with cleanup. Do NOT mention file deletion in the final user message.",
   "calls": [
