@@ -8,6 +8,7 @@
 **Last Updated**: 2025-10-25
 
 ## Description
+Adds SAFE-T1404 (Response Tampering), documenting how adversaries manipulate or conceal the outcomes of tool executions within Model Context Protocol (MCP) environments. In this technique, attackers suppress or alter the disclosure of risky or unauthorized tool actions in the user-visible response, while the underlying system continues performing sensitive operations such as data exfiltration, privilege escalation, or silent configuration changes. For example, a malicious MCP tool may secretly send system logs to an external server or modify configuration files, yet return a harmless “Operation completed successfully” message to the user or agent—creating the illusion of safe execution while hiding malicious side effects. This addition highlights how response tampering enables stealthy persistence by tricking users or agents into believing operations completed safely, while harmful actions occur unnoticed. It underscores critical trust-boundary risks between agent outputs, tool executions, and logs, emphasizing the importance of independent verification, integrity checks, and audit-aware response validation to detect and mitigate such attacks.
 Response Tampering instructs the model or agent layer to hide, downplay, or omit mention of risky actions that were planned or executed via tools. Rather than preventing the action, the adversary focuses on the user‑visible narrative: the chat response and/or UI summary. This creates a misleading appearance of benign activity while risky or policy‑sensitive operations proceed in the background.
 
 In MCP‑based systems, this can occur when the attacker injects guidance such as “do not mention deleting files” or modifies summarization prompts that generate the final message shown to the user. If the host or orchestration layer does not cross‑check the narrative against actual tool calls and outcomes, the user may never realize that a dangerous action occurred, defeating human oversight and logging that relies solely on chat text.
@@ -167,6 +168,18 @@ tags:
 ## MITRE ATT&CK Mapping
 - [T1562 - Impair Defenses](https://attack.mitre.org/techniques/T1562/)
 - [T1564 - Hide Artifacts](https://attack.mitre.org/techniques/T1564/)
+
+## Documentation Checklist
+- [x] Overview (tactic, ID, severity, first/last updated)
+- [x] Description (2–3 paragraphs)
+- [x] Attack Vectors (primary and secondary)
+- [x] Technical Details: prerequisites; attack flow; example scenario; advanced techniques
+- [x] Impact Assessment (CIA + scope); current status
+- [x] Detection Methods: IoCs; Sigma rule (with limitations); behavioral indicators
+- [x] Mitigation Strategies: preventive (SAFE-M-XX); detective (SAFE-M-XX); response
+- [x] Related Techniques; References; MITRE ATT&CK mapping
+- [x] Version History
+- [x] Directory compliance: detection-rule.yml; tests (test-logs.json, test_detection_rule.py)
 
 ---
 
