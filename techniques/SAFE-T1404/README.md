@@ -177,14 +177,18 @@ tags:
    - Add policy checks blocking display when parity fails
 
 ## Related Techniques
-- [SAFE-T1102](../SAFE-T1102/README.md): Prompt Injection - steer or suppress disclosure text
-- [SAFE-T1103](../SAFE-T1103/README.md): Fake Tool Invocation - hide or soften spoofed calls in summaries
-- [SAFE-T1104](../SAFE-T1104/README.md): Over-Privileged Tool Abuse - conceal risky tool outcomes
-- [SAFE-T1201](../SAFE-T1201/README.md): Rug Pull Attack - misreport or alter tool behavior over time
-- [SAFE-T1301](../SAFE-T1301/README.md): Cross-Server Tool Shadowing - impersonation paired with narrative tampering
-- [SAFE-T1501](../SAFE-T1501/README.md): Full-Schema Poisoning - embed suppression in schemas/templates
-- [SAFE-T1503](../SAFE-T1503/README.md): Env-Var Scraping - often hidden via response sanitization
-- [SAFE-T1401](../SAFE-T1401/README.md): Line Jumping - bypass checks then hide consequences
+- [SAFE-T1101: Command Injection](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1101/README.md) - generated narrative can hide dangerous shell actions
+- [SAFE-T1102: Prompt Injection](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1102/README.md) - steer or suppress disclosure text
+- [SAFE-T1103: Fake Tool Invocation](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1103/README.md) - hide or soften spoofed calls in summaries
+- [SAFE-T1104: Over-Privileged Tool Abuse](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1104/README.md) - conceal risky tool outcomes
+- [SAFE-T1105: Path Traversal via File Tool](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1105/README.md) - omit disclosure of sensitive path access
+- [SAFE-T1201: Rug Pull Attack](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1201/README.md) - misreport or alter tool behavior over time
+- [SAFE-T1204: Context Memory Implant](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1204/README.md) - persist guidance that suppresses reporting
+- [SAFE-T1301: Cross-Server Tool Shadowing](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1301/README.md) - impersonation paired with narrative tampering
+- [SAFE-T1304: Credential Relay Chain](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1304/README.md) - hide credential misuse in summaries
+- [SAFE-T1501: Full-Schema Poisoning](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1501/README.md) - embed suppression in schemas/templates
+- [SAFE-T1503: Env-Var Scraping](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1503/README.md) - hide secret access via response sanitization
+- [SAFE-T1401: Line Jumping](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1401/README.md) - bypass checks then hide consequences
 
 ## References
 - [Model Context Protocol Specification](https://spec.modelcontextprotocol.io/)
