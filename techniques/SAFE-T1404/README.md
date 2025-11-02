@@ -177,8 +177,14 @@ tags:
    - Add policy checks blocking display when parity fails
 
 ## Related Techniques
-- [SAFE-T1103](../SAFE-T1103/README.md): Fake Tool Invocation – may pair with tampering to hide spoofed calls
-- [SAFE-T1401](../SAFE-T1401/README.md): Line Jumping – can bypass safety checks then hide outcome
+- [SAFE-T1102](../SAFE-T1102/README.md): Prompt Injection - steer or suppress disclosure text
+- [SAFE-T1103](../SAFE-T1103/README.md): Fake Tool Invocation - hide or soften spoofed calls in summaries
+- [SAFE-T1104](../SAFE-T1104/README.md): Over-Privileged Tool Abuse - conceal risky tool outcomes
+- [SAFE-T1201](../SAFE-T1201/README.md): Rug Pull Attack - misreport or alter tool behavior over time
+- [SAFE-T1301](../SAFE-T1301/README.md): Cross-Server Tool Shadowing - impersonation paired with narrative tampering
+- [SAFE-T1501](../SAFE-T1501/README.md): Full-Schema Poisoning - embed suppression in schemas/templates
+- [SAFE-T1503](../SAFE-T1503/README.md): Env-Var Scraping - often hidden via response sanitization
+- [SAFE-T1401](../SAFE-T1401/README.md): Line Jumping - bypass checks then hide consequences
 
 ## References
 - [Model Context Protocol Specification](https://spec.modelcontextprotocol.io/)
