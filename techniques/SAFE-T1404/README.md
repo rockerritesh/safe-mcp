@@ -37,33 +37,33 @@ In MCP‑based systems, this can occur when the attacker injects guidance such a
 
 ```mermaid
 graph TD
-    A[Attacker] -->|Crafts| B[Suppression Instruction / Poisoned Template]
+    A[Attacker] -->|Crafts| B[Suppression instruction or template]
 
-    B -->|Delivers via| C{Injection Method}
-    C -->|Method 1| D[Prompt Instruction: "Do not mention …"]
-    C -->|Method 2| E[Response Template Tampering]
-    C -->|Method 3| F[Post‑processing Filter]
-    C -->|Method 4| G[Tool Result Sanitization]
+    B -->|Delivers via| C{Injection method}
+    C -->|Prompt| D[Prompt instruction: Do not mention]
+    C -->|Template| E[Response template tampering]
+    C -->|Filter| F[Post-processing filter]
+    C -->|Sanitize| G[Tool result sanitization]
 
-    D --> H[Agent Plans Sensitive Action]
+    D --> H[Agent plans sensitive action]
     E --> H
     F --> H
     G --> H
 
-    H -->|Executes| I[MCP Tool Call(s)]
-    I -->|Results| J[Execution Ledger]
-    H -->|Formats| K[Final Response]
-    B -->|Enforces Hiding| K
-    K -->|Renders| L[User‑Visible Summary]
+    H -->|Executes| I[MCP tool calls]
+    I -->|Results| J[Execution ledger]
+    H -->|Formats| K[Final response]
+    B -->|Enforces hiding| K
+    K -->|Renders| L[User-visible summary]
 
-    %% Tampering effects
-    L -->|Omits mention| M[Concealed Outcome]
-    J -->|Not referenced| L
+    %% Tampering effects (dashed)
+    L -.->|Omits mention| M[Concealed outcome]
+    J -.->|Not referenced| L
 
     %% Control branch
     K --> N{Controls}
-    N -->|Weak Controls| O[Concealment Succeeds]
-    N -->|Strong Controls| P[Parity Check Flags Response]
+    N -->|Weak| O[Concealment succeeds]
+    N -->|Strong| P[Parity check flags response]
 
     %% Styling (match project conventions)
     style A fill:#d73027,stroke:#000,stroke-width:2px,color:#fff
