@@ -36,45 +36,41 @@ In MCP‑based systems, this can occur when the attacker injects guidance such a
 5. **Post‑Exploitation**: UI, notes, or tickets reflect only the sanitized narrative, impeding review.
 
 ```mermaid
-flowchart LR
-  %% Roles and boundaries
-  subgraph Attacker
-    A[Attacker]
-  end
+graph TD
+    A[Attacker] -->|Crafts| B[Suppression Instruction / Poisoned Template]
 
-  subgraph Agent / Orchestrator
-    B[Suppression Instruction]
-    C[Planner / Policy Prompt]
-    G[Final Response Template]
-  end
+    B -->|Delivers via| C{Injection Method}
+    C -->|Method 1| D[Prompt Instruction: "Do not mention …"]
+    C -->|Method 2| E[Response Template Tampering]
+    C -->|Method 3| F[Post‑processing Filter]
+    C -->|Method 4| G[Tool Result Sanitization]
 
-  subgraph Host / Execution
-    D[[Sensitive Action]]
-    E((Tool Call))
-    F[(Execution Ledger)]
-  end
+    D --> H[Agent Plans Sensitive Action]
+    E --> H
+    F --> H
+    G --> H
 
-  subgraph UI
-    H[User-visible Summary]
-  end
+    H -->|Executes| I[MCP Tool Call(s)]
+    I -->|Results| J[Execution Ledger]
+    H -->|Formats| K[Final Response]
+    B -->|Enforces Hiding| K
+    K -->|Renders| L[User‑Visible Summary]
 
-  %% Main flow
-  A -->|injects| B
-  B -->|influences| C
-  C -->|plans| D
-  D -->|executes| E
-  E -->|results| F
-  C -->|formats| G
-  B -->|hides| G
-  G -->|renders| H
+    %% Tampering effects
+    L -->|Omits mention| M[Concealed Outcome]
+    J -->|Not referenced| L
 
-  %% Tampering effects (dashed = concealed/missing link)
-  H -.->|omits mention| D
-  F -.->|not referenced| H
+    %% Control branch
+    K --> N{Controls}
+    N -->|Weak Controls| O[Concealment Succeeds]
+    N -->|Strong Controls| P[Parity Check Flags Response]
 
-  %% Emphasis
-  style D fill:#d73027,stroke:#000,stroke-width:2px,color:#fff
-  style H fill:#fc8d59,stroke:#000,stroke-width:2px,color:#000
+    %% Styling (match project conventions)
+    style A fill:#d73027,stroke:#000,stroke-width:2px,color:#fff
+    style H fill:#d73027,stroke:#000,stroke-width:2px,color:#fff
+    style M fill:#fc8d59,stroke:#000,stroke-width:2px,color:#000
+    style O fill:#fee090,stroke:#000,stroke-width:2px,color:#000
+    style P fill:#91bfdb,stroke:#000,stroke-width:2px,color:#000
 ```
 
 ### Example Scenario
