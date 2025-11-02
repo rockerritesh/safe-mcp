@@ -205,10 +205,7 @@ tags:
 - [x] Version History
 - [x] Directory compliance: detection-rule.yml; tests (test-logs.json, test_detection_rule.py)
 
----
 
-**Version:** 1.0  
-**Contributors:** SAFE-MCP Community, Shekhar Chaudhary
 
 ## Version History
 | Version | Date       | Changes                 | Author             |
