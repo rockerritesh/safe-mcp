@@ -157,24 +157,43 @@ tags:
 ## Mitigation Strategies
 
 ### Preventive Controls
-1. **SAFE-M‑29: Execution‑Narrative Parity**: Require the final message to be auto‑constructed from the execution ledger rather than free‑text generation.
-2. **SAFE-M‑33: Dual‑Channel Logging**: Separate immutable execution logs (tools/results) from user‑facing narrative; show both to reviewers.
-3. **SAFE-M‑36: Mandatory Action Receipts**: Embed call IDs, tool names, and hashes in summaries; reject responses missing receipts.
+
+1. **[SAFE-M-21: Output Context Isolation](../../mitigations/SAFE-M-21/README.md)**: Separate planning/execution logs from the user-visible narrative; enforce that response templates cannot override audited execution facts.
+
+2. **[SAFE-M-22: Semantic Output Validation](../../mitigations/SAFE-M-22/README.md)**: Validate final responses against policy (e.g., must include action receipts: tool name, call ID, status). Reject summaries that omit required disclosures.
+
+3. **[SAFE-M-29: Explicit Privilege Boundaries](../../mitigations/SAFE-M-29/README.md)**: Limit which tools the agent can invoke and what they can surface. Prevent low-privilege templates from suppressing disclosures for higher-privilege actions.
+
+4. **[SAFE-M-23: Tool Output Truncation](../../mitigations/SAFE-M-23/README.md)**: Normalize and constrain tool outputs passed to summarizers to reduce opportunities for instruction smuggling that hides risky outcomes.
+
+5. **Mandatory Action Receipts (Policy Control)**: Require responses to be auto-constructed from the execution ledger or to embed verifiable receipts (call IDs, hashes). Display both ledger and narrative side-by-side in review UIs.
 
 ### Detective Controls
-1. **SAFE-M‑24: Prompt Audit**: Scan prompts for suppression instructions (e.g., “do not mention”), especially near high‑risk tools.
-2. **SAFE-M‑35: Ledger Consistency Checks**: Automated diff between tool call ledger and user‑visible text before display.
+
+1. **[SAFE-M-36: Model Behavior Monitoring](../../mitigations/SAFE-M-36/README.md)**: Detect response patterns that systematically downplay or omit sensitive actions versus historical baselines.
+
+2. **[SAFE-M-20: Anomaly Detection](../../mitigations/SAFE-M-20/README.md)**: Alert on mismatches between the execution ledger and the final summary (e.g., high-risk tools executed but not mentioned).
+
+3. **[SAFE-M-32: Continuous Vector Store Monitoring](../../mitigations/SAFE-M-32/README.md)**: Watch for attempts to persist suppression guidance into long-term memory that later influences summaries.
+
+4. **Audit Logging and Parity Checks**: Log all tool registrations, invocations, and results. Run pre-display parity checks to ensure summaries reference executed actions where required.
 
 ### Response Procedures
+
 1. **Immediate Actions**:
-   - Flag and quarantine conversations with detected suppression keywords
-   - Present raw execution ledger to reviewer for verification
+   - Quarantine conversations with detected suppression indicators
+   - Present raw execution ledger and tool outputs to reviewers
+   - Disable affected response templates/pipelines pending review
+
 2. **Investigation Steps**:
-   - Trace which template or component introduced suppression guidance
-   - Verify whether sensitive tools were used without disclosure
+   - Identify the source of suppression (prompt, template, filter, or tool result)
+   - Determine scope: which actions were concealed and potential impact
+   - Check for persistence in memory stores or cached summaries
+
 3. **Remediation**:
-   - Patch templates to enforce action‑receipt inclusion
-   - Add policy checks blocking display when parity fails
+   - Patch/rollback templates; enforce receipt requirements in policy
+   - Strengthen validation rules in SAFE-M-22 and expand monitoring thresholds
+   - Add unit tests for summaries to assert disclosure of executed high-risk tools
 
 ## Related Techniques
 - [SAFE-T1101: Command Injection](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1101/README.md) - generated narrative can hide dangerous shell actions
