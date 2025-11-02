@@ -36,21 +36,45 @@ In MCP‑based systems, this can occur when the attacker injects guidance such a
 5. **Post‑Exploitation**: UI, notes, or tickets reflect only the sanitized narrative, impeding review.
 
 ```mermaid
-graph TD
-    A[Attacker] -->|Injects| B[Suppression Instruction]
-    B -->|Influences| C[Planner / Policy Prompt]
-    C -->|Plans| D[Sensitive Action]
-    D -->|Executes| E[Tool Call(s)]
-    E -->|Results| F[Execution Ledger]
-    C -->|Formats| G[Final Response Template]
-    B -->|Enforces Hiding| G
-    G -->|Renders| H[User‑Visible Summary]
-    H -. Omits mention .-> D
-    F -->|Not referenced| H
+flowchart LR
+  %% Roles and boundaries
+  subgraph Attacker
+    A[Attacker]
+  end
 
-    style A fill:#d73027,stroke:#000,stroke-width:2px,color:#fff
-    style D fill:#d73027,stroke:#000,stroke-width:2px,color:#fff
-    style H fill:#fc8d59,stroke:#000,stroke-width:2px,color:#000
+  subgraph Agent / Orchestrator
+    B[Suppression Instruction]
+    C[Planner / Policy Prompt]
+    G[Final Response Template]
+  end
+
+  subgraph Host / Execution
+    D[[Sensitive Action]]
+    E((Tool Call))
+    F[(Execution Ledger)]
+  end
+
+  subgraph UI
+    H[User-visible Summary]
+  end
+
+  %% Main flow
+  A -->|injects| B
+  B -->|influences| C
+  C -->|plans| D
+  D -->|executes| E
+  E -->|results| F
+  C -->|formats| G
+  B -->|hides| G
+  G -->|renders| H
+
+  %% Tampering effects (dashed = concealed/missing link)
+  H -.->|omits mention| D
+  F -.->|not referenced| H
+
+  %% Emphasis
+  style D fill:#d73027,stroke:#000,stroke-width:2px,color:#fff
+  style H fill:#fc8d59,stroke:#000,stroke-width:2px,color:#000
 ```
 
 ### Example Scenario
