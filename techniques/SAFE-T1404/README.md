@@ -185,9 +185,14 @@ tags:
 - [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 - [The Security Risks of Model Context Protocol (MCP) – Pillar Security, 2025](https://www.pillar.security/blog/the-security-risks-of-model-context-protocol-mcp)
 - [Poison Everywhere: No Output from Your MCP Server is Safe – CyberArk, 2025](https://www.cyberark.com/resources/threat-research-blog/poison-everywhere-no-output-from-your-mcp-server-is-safe)
-- [Not what you've signed up for: Compromising Real‑World LLM‑Integrated Applications – USENIX Security 2024](https://arxiv.org/abs/2302.12173)
+- [Prompt Injection Attack on GPT‑4 – Robust Intelligence](https://www.robustintelligence.com/blog-posts/prompt-injection-attack-on-gpt-4)
+- [Not What You've Signed Up For: Compromising Real‑World LLM‑Integrated Applications – arXiv, 2023](https://arxiv.org/abs/2302.12173)
 - [MITRE ATT&CK T1562 – Impair Defenses](https://attack.mitre.org/techniques/T1562/)
 - [MITRE ATT&CK T1564 – Hide Artifacts](https://attack.mitre.org/techniques/T1564/)
+- [CWE‑345: Insufficient Verification of Data Authenticity](https://cwe.mitre.org/data/definitions/345.html)
+- [CWE‑451: User Interface Misrepresentation of Critical Information](https://cwe.mitre.org/data/definitions/451.html)
+- [OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html)
+- [NIST SP 800‑53 Rev. 5 – Security and Privacy Controls (AU family)](https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final)
 
 ## MITRE ATT&CK Mapping
 - [T1562 - Impair Defenses](https://attack.mitre.org/techniques/T1562/)
