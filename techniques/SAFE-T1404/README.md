@@ -181,9 +181,13 @@ tags:
 - [SAFE-T1401](../SAFE-T1401/README.md): Line Jumping – can bypass safety checks then hide outcome
 
 ## References
-- [Model Context Protocol Specification](https://modelcontextprotocol.io/specification)
+- [Model Context Protocol Specification](https://spec.modelcontextprotocol.io/)
 - [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
-- Additional engineering notes on disclosure parity and execution receipts (internal best practices)
+- [The Security Risks of Model Context Protocol (MCP) – Pillar Security, 2025](https://www.pillar.security/blog/the-security-risks-of-model-context-protocol-mcp)
+- [Poison Everywhere: No Output from Your MCP Server is Safe – CyberArk, 2025](https://www.cyberark.com/resources/threat-research-blog/poison-everywhere-no-output-from-your-mcp-server-is-safe)
+- [Not what you've signed up for: Compromising Real‑World LLM‑Integrated Applications – USENIX Security 2024](https://arxiv.org/abs/2302.12173)
+- [MITRE ATT&CK T1562 – Impair Defenses](https://attack.mitre.org/techniques/T1562/)
+- [MITRE ATT&CK T1564 – Hide Artifacts](https://attack.mitre.org/techniques/T1564/)
 
 ## MITRE ATT&CK Mapping
 - [T1562 - Impair Defenses](https://attack.mitre.org/techniques/T1562/)
@@ -203,7 +207,6 @@ tags:
 
 ---
 
-**Last Updated:** 2025-10-25  
 **Version:** 1.0  
 **Contributors:** SAFE-MCP Community, Shekhar Chaudhary
 
