@@ -188,7 +188,7 @@ tags:
 - [SAFE-T1304: Credential Relay Chain](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1304/README.md) - hide credential misuse in summaries
 - [SAFE-T1501: Full-Schema Poisoning](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1501/README.md) - embed suppression in schemas/templates
 - [SAFE-T1503: Env-Var Scraping](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1503/README.md) - hide secret access via response sanitization
-- [SAFE-T1401: Line Jumping](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1401/README.md) - bypass checks then hide consequences
+<!-- Note: SAFE-T1401 not yet in main; omit to avoid 404 -->
 
 ## References
 - [Model Context Protocol Specification](https://spec.modelcontextprotocol.io/)
