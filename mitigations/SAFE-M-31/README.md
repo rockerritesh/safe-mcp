@@ -93,58 +93,82 @@ PoP tokens work by requiring clients to demonstrate possession of a private key 
 
 ### Example 1: PoP Token Request
 ```python
+import base64
+import hashlib
+import secrets
+import time
+
 import jwt
-from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 
-def create_pop_token_request(client_private_key, access_token):
-    """Create a PoP token request with cryptographic proof"""
-    
-    # Create JWT header with PoP algorithm
+
+def generate_nonce(length: int = 16) -> str:
+    """Generate a cryptographically strong nonce."""
+    return base64.urlsafe_b64encode(secrets.token_bytes(length)).decode("utf-8").rstrip("=")
+
+
+def hash_access_token(access_token: str) -> str:
+    """Create a deterministic hash of the access token for PoP binding."""
+    digest = hashlib.sha256(access_token.encode("utf-8")).digest()
+    return base64.urlsafe_b64encode(digest).decode("utf-8").rstrip("=")
+
+
+def create_pop_token_request(client_private_key, access_token: str) -> str:
+    """Create a PoP token request with cryptographic proof."""
+
     header = {
         "alg": "RS256",
         "typ": "JWT",
-        "kid": "client-key-id"
+        "kid": "client-key-id",
     }
-    
-    # Create payload with access token binding
+
     payload = {
-        "at": access_token,  # Access token hash
-        "ts": int(time.time()),  # Timestamp
-        "m": "POST",  # HTTP method
-        "u": "https://api.example.com/resource",  # URL
-        "nonce": generate_nonce()  # Nonce for replay protection
+        "at": hash_access_token(access_token),
+        "ts": int(time.time()),
+        "m": "POST",
+        "u": "https://api.example.com/resource",
+        "nonce": generate_nonce(),
     }
-    
-    # Sign the PoP token
+
     pop_token = jwt.encode(payload, client_private_key, algorithm="RS256", headers=header)
     return pop_token
 ```
 
 ### Example 2: PoP Token Validation
 ```python
-def validate_pop_token(pop_token, access_token, client_public_key):
-    """Validate a PoP token on the resource server"""
-    
+import logging
+import time
+
+import jwt
+
+TOKEN_SKEW_SECONDS = 300  # Accept tokens within ±5 minutes
+
+logger = logging.getLogger(__name__)
+
+
+def validate_pop_token(pop_token: str, access_token: str, client_public_key, http_method: str, request_url: str) -> bool:
+    """Validate a PoP token on the resource server."""
+
     try:
-        # Decode and verify the PoP token
         payload = jwt.decode(pop_token, client_public_key, algorithms=["RS256"])
-        
-        # Verify access token binding
+
         if payload["at"] != hash_access_token(access_token):
             raise ValueError("Access token mismatch")
-        
-        # Verify timestamp (within acceptable range)
-        if abs(payload["ts"] - time.time()) > 300:  # 5 minutes
+
+        if abs(payload["ts"] - time.time()) > TOKEN_SKEW_SECONDS:
             raise ValueError("Token expired")
-        
-        # Verify HTTP method and URL if provided
-        if "m" in payload and payload["m"] != request.method:
+
+        if payload.get("m", "").upper() != http_method.upper():
             raise ValueError("HTTP method mismatch")
-        
+
+        if payload.get("u") and payload["u"] != request_url:
+            raise ValueError("Request URL mismatch")
+
         return True
-        
-    except jwt.InvalidTokenError:
+
+    except (jwt.InvalidTokenError, KeyError, ValueError) as e:
+        logger.warning(f"PoP validation failed: {e}")
         return False
 ```
 

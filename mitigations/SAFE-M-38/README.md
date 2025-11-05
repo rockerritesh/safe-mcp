@@ -160,84 +160,74 @@ class PKCEGenerator:
 
 ### Example 2: Server-Side PKCE Validation
 ```python
-import hashlib
 import base64
+import hashlib
+from typing import Dict, Union
+
 from oauthlib.oauth2 import RequestValidator
+
 
 class PKCEValidator(RequestValidator):
     def __init__(self):
-        self.stored_challenges = {}  # In production, use secure storage
-    
-    def store_code_challenge(self, authorization_code, code_challenge, code_challenge_method):
-        """Store code challenge for later validation"""
+        # PRODUCTION WARNING: Use Redis or similar distributed cache instead of in-memory storage
+        self.stored_challenges: Dict[str, Dict[str, str]] = {}
+
+    def _store_code_challenge(self, authorization_code: str, code_challenge: str, code_challenge_method: str):
+        """Store PKCE challenge for later validation. Always defaults to S256 for security."""
         self.stored_challenges[authorization_code] = {
-            'challenge': code_challenge,
-            'method': code_challenge_method
+            "challenge": code_challenge,
+            "method": code_challenge_method or "S256",
         }
-    
-    def validate_code_verifier(self, authorization_code, code_verifier):
-        """Validate code verifier against stored challenge"""
-        if authorization_code not in self.stored_challenges:
-            return False
-        
-        stored_data = self.stored_challenges[authorization_code]
-        stored_challenge = stored_data['challenge']
-        challenge_method = stored_data['method']
-        
-        if challenge_method != 'S256':
-            return False
-        
-        # Generate challenge from verifier
-        sha256_hash = hashlib.sha256(code_verifier.encode('utf-8')).digest()
-        generated_challenge = base64.urlsafe_b64encode(sha256_hash).decode('utf-8')
-        generated_challenge = generated_challenge.rstrip('=')
-        
-        # Compare challenges
-        if generated_challenge != stored_challenge:
-            return False
-        
-        # Clean up stored challenge
-        del self.stored_challenges[authorization_code]
-        
-        return True
-    
-    def validate_authorization_request(self, request):
-        """Validate authorization request includes PKCE"""
+
+    def save_authorization_code(self, client_id: str, code: Union[str, Dict[str, str]], request):
+        """
+        Persist PKCE challenge alongside the authorization code.
+
+        Args:
+            client_id: OAuth client identifier
+            code: Either a string (authorization code) or dict with 'code' key (oauthlib format)
+            request: OAuth request object containing code_challenge and code_challenge_method
+        """
         if not request.code_challenge:
             raise ValueError("PKCE code_challenge is required")
-        
-        if not request.code_challenge_method:
-            request.code_challenge_method = 'S256'  # Default to S256
-        
-        if request.code_challenge_method not in ['S256', 'plain']:
-            raise ValueError("Unsupported PKCE method")
-        
-        # At this stage, the authorization code is not yet issued.
-        # Store the challenge keyed by a value available now (e.g., user session or transaction id),
-        # then bind it to the authorization code when the code is generated.
-        request.transaction_id = getattr(request, 'transaction_id', None)
-        if request.transaction_id:
-            self.store_code_challenge(
-                request.transaction_id,
-                request.code_challenge,
-                request.code_challenge_method
-            )
-        
+
+        # Default to S256, reject 'plain' for security
+        method = request.code_challenge_method or "S256"
+        if method not in ("S256",):
+            raise ValueError(f"Unsupported PKCE method '{method}'. Only S256 is allowed for security.")
+
+        # Handle both oauthlib dict format and plain string
+        auth_code = code["code"] if isinstance(code, dict) else code
+        self._store_code_challenge(auth_code, request.code_challenge, method)
+
+    def validate_code_verifier(self, authorization_code: str, code_verifier: str) -> bool:
+        """Validate code verifier against stored challenge."""
+        challenge_data = self.stored_challenges.get(authorization_code)
+        if not challenge_data:
+            return False
+
+        if challenge_data["method"] != "S256":
+            return False  # Enforce S256 for maximum security
+
+        sha256_hash = hashlib.sha256(code_verifier.encode("utf-8")).digest()
+        generated_challenge = base64.urlsafe_b64encode(sha256_hash).decode("utf-8").rstrip("=")
+
+        if generated_challenge != challenge_data["challenge"]:
+            return False
+
+        # Clean up to prevent reuse
+        self.stored_challenges.pop(authorization_code, None)
         return True
-    
+
     def validate_token_request(self, request):
-        """Validate token request includes PKCE verification"""
-        if request.grant_type == 'authorization_code':
+        """Validate token request includes PKCE verification."""
+        if request.grant_type == "authorization_code":
             if not request.code_verifier:
                 raise ValueError("PKCE code_verifier is required for authorization code flow")
-            
-            # If challenge was stored using transaction id, first bind it to the issued code
-            if getattr(request, 'transaction_id', None) and request.transaction_id in self.stored_challenges and request.code not in self.stored_challenges:
-                self.stored_challenges[request.code] = self.stored_challenges.pop(request.transaction_id)
 
             if not self.validate_code_verifier(request.code, request.code_verifier):
                 raise ValueError("Invalid PKCE code_verifier")
-        
+
         return True
 ```
 

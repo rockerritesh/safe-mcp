@@ -96,92 +96,152 @@ The approach combines proactive token rotation (replacing tokens before expirati
 
 ### Example 1: Automatic Token Rotation
 ```python
+import logging
 import time
-from datetime import datetime, timedelta
+from typing import Any, Callable, Dict, Optional, Protocol
+
+logger = logging.getLogger(__name__)
+
+
+class OAuthClient(Protocol):
+    """Protocol for OAuth client that can refresh tokens."""
+    def refresh_token(self, refresh_token: str) -> Dict[str, Any]: ...
+
+
+class SecurityMonitor(Protocol):
+    """Protocol for security monitoring service."""
+    def alert_token_rotation_failure(self, client_id: str, error: str) -> None: ...
+
 
 class TokenRotationService:
-    def __init__(self, rotation_threshold=300):  # 5 minutes before expiry
+    def __init__(
+        self,
+        oauth_client: OAuthClient,
+        revoke_callback: Callable[[str, str], None],
+        security_monitor: SecurityMonitor,
+        rotation_threshold: int = 300,
+    ):
+        """
+        oauth_client: object that can refresh tokens (e.g., wraps the authorization server)
+        revoke_callback: function invoked with (access_token, reason) when an old token must be revoked
+        security_monitor: object with alert_token_rotation_failure(client_id, error) method
+        rotation_threshold: number of seconds before expiry to trigger proactive rotation
+        """
+        self.oauth_client = oauth_client
+        self.revoke_callback = revoke_callback
+        self.security_monitor = security_monitor
         self.rotation_threshold = rotation_threshold
-        self.active_tokens = {}
-    
-    def should_rotate_token(self, access_token, expires_at):
-        """Check if token should be rotated"""
-        current_time = time.time()
-        time_until_expiry = expires_at - current_time
-        
+        # PRODUCTION WARNING: Use Redis or similar distributed cache instead of in-memory storage
+        self.active_tokens: Dict[str, Dict[str, Optional[float]]] = {}
+
+    def should_rotate_token(self, expires_at: float) -> bool:
+        """Check if token should be rotated."""
+        time_until_expiry = expires_at - time.time()
         return time_until_expiry <= self.rotation_threshold
-    
-    def rotate_token(self, refresh_token, client_id):
-        """Rotate access token using refresh token"""
+
+    def rotate_token(self, client_id: str, refresh_token: str):
+        """Rotate access token using refresh token."""
         try:
-            # Request new access token
+            previous_session = self.active_tokens.get(client_id, {})
+            old_access_token = previous_session.get("access_token")
+
             new_token_response = self.oauth_client.refresh_token(refresh_token)
-            
-            # Invalidate old access token
-            self.revoke_token(new_token_response['old_access_token'])
-            
-            # Update active tokens registry
+
+            # Update active tokens BEFORE revocation to ensure new token is available
             self.active_tokens[client_id] = {
-                'access_token': new_token_response['access_token'],
-                'refresh_token': new_token_response['refresh_token'],
-                'expires_at': time.time() + new_token_response['expires_in']
+                "access_token": new_token_response["access_token"],
+                "refresh_token": new_token_response["refresh_token"],
+                "expires_at": time.time() + new_token_response["expires_in"],
             }
-            
+
+            # Attempt to revoke old token, but don't fail rotation if revocation fails
+            if old_access_token:
+                try:
+                    self.revoke_callback(old_access_token, reason="rotation")
+                except Exception as revoke_exc:
+                    logger.warning(f"Failed to revoke old token for {client_id}: {revoke_exc}")
+                    # Continue - new token is already active
+
             return new_token_response
-            
-        except Exception as e:
-            # Log rotation failure and trigger security alert
-            self.security_monitor.alert_token_rotation_failure(client_id, str(e))
+
+        except Exception as exc:
+            self.security_monitor.alert_token_rotation_failure(client_id, str(exc))
             raise
 ```
 
 ### Example 2: Token Invalidation Service
 ```python
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+class ResourceNotifier(Protocol):
+    """Protocol for notifying resource servers of token revocation."""
+    def broadcast_revocation(self, access_token: str) -> None: ...
+
+
+class AuditLogger(Protocol):
+    """Protocol for audit logging."""
+    def log_token_revocation(self, access_token: str, reason: str) -> None: ...
+
+
 class TokenInvalidationService:
-    def __init__(self):
+    def __init__(
+        self,
+        resource_notifier: ResourceNotifier,
+        audit_logger: AuditLogger,
+        security_monitor: SecurityMonitor,
+    ):
+        self.resource_notifier = resource_notifier
+        self.audit_logger = audit_logger
+        self.security_monitor = security_monitor
+        # PRODUCTION WARNING: Use Redis or similar distributed cache instead of in-memory storage
         self.revoked_tokens = set()
-        self.token_blacklist = {}
-    
-    def revoke_token(self, access_token, reason="security_compromise"):
-        """Immediately revoke a compromised token"""
+        self.token_blacklist: Dict[str, Dict[str, str]] = {}
+
+    def revoke_token(self, access_token: str, reason: str = "security_compromise") -> bool:
+        """Immediately revoke a compromised token."""
         try:
-            # Add to revocation list
-            self.revoked_tokens.add(access_token)
-            
-            # Add to blacklist with metadata
-            self.token_blacklist[access_token] = {
-                'revoked_at': time.time(),
-                'reason': reason,
-                'revoked_by': 'security_system'
-            }
-            
-            # Notify all resource servers
-            self.notify_resource_servers(access_token, 'revoked')
-            
-            # Log revocation for audit
+            # Log FIRST to ensure audit trail even if broadcast fails
             self.audit_logger.log_token_revocation(access_token, reason)
-            
+
+            self.revoked_tokens.add(access_token)
+            self.token_blacklist[access_token] = {
+                "revoked_at": time.time(),
+                "reason": reason,
+                "revoked_by": "security_system",
+            }
+
+            # Attempt broadcast, but don't fail revocation if it fails
+            try:
+                self.resource_notifier.broadcast_revocation(access_token)
+            except Exception as broadcast_exc:
+                logger.error(f"Failed to broadcast revocation: {broadcast_exc}")
+                # Token is still revoked locally
+
             return True
-            
-        except Exception as e:
-            self.security_monitor.alert_invalidation_failure(access_token, str(e))
+
+        except Exception as exc:
+            self.security_monitor.alert_invalidation_failure(access_token, str(exc))
             return False
-    
-    def is_token_revoked(self, access_token):
-        """Check if token is in revocation list"""
+
+    def is_token_revoked(self, access_token: str) -> bool:
+        """Check if token is in revocation list."""
         return access_token in self.revoked_tokens
-    
-    def cleanup_expired_revocations(self, max_age=86400):  # 24 hours
-        """Clean up old revocation records"""
+
+    def cleanup_expired_revocations(self, max_age: int = 86_400) -> None:
+        """Clean up old revocation records."""
         current_time = time.time()
         expired_tokens = [
-            token for token, metadata in self.token_blacklist.items()
-            if current_time - metadata['revoked_at'] > max_age
+            token
+            for token, metadata in self.token_blacklist.items()
+            if current_time - metadata["revoked_at"] > max_age
         ]
-        
+
         for token in expired_tokens:
             self.revoked_tokens.discard(token)
-            del self.token_blacklist[token]
+            self.token_blacklist.pop(token, None)
 ```
 
 ## Testing and Validation
