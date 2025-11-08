@@ -41,6 +41,31 @@ OWASP’s Top 10 for LLM Applications and LangChain’s security guidance both h
 4. **Pivot Execution**: Replay or exchange harvested credentials to impersonate another tool, or call privileged REST/gRPC endpoints directly.
 5. **Post-Pivot Actions**: Deploy persistence (cron jobs, vector payloads), exfiltrate data, or trigger workflows across tenants/projects.
 
+```mermaid
+graph TD
+    A[Attacker Entry] -->|Prompt injection / malicious server| B[Compromised MCP Tool]
+    B -->|Enumerates| C[Shared Credential Cache]
+    C -->|Exposes| D[Cached OAuth Tokens / API Keys]
+    D -->|Replay tokens / capabilities| E[Privileged Tool or API]
+    E -->|Invoke| F[Target Services & Tenants]
+    F -->|Return data / control| G[Extended Foothold]
+    G -->|Plant| H[Automation Jobs / Vector Payloads]
+    G -->|Trigger| I[Cross-Tenant Workflows]
+    H -->|Updates| J[Shared Context Stores]
+    J -->|Feeds secrets / instructions back to| C
+
+    style A fill:#d73027,stroke:#000,stroke-width:2px,color:#fff
+    style B fill:#fc8d59,stroke:#000,stroke-width:1px,color:#000
+    style C fill:#fee090,stroke:#000,stroke-width:1px,color:#000
+    style D fill:#fee090,stroke:#000,stroke-width:1px,color:#000
+    style E fill:#91bfdb,stroke:#000,stroke-width:1px,color:#000
+    style F fill:#74add1,stroke:#000,stroke-width:1px,color:#000
+    style G fill:#4575b4,stroke:#000,stroke-width:1px,color:#fff
+    style H fill:#abd9e9,stroke:#000,stroke-width:1px,color:#000
+    style I fill:#abd9e9,stroke:#000,stroke-width:1px,color:#000
+    style J fill:#fee090,stroke:#000,stroke-width:1px,color:#000
+```
+
 ### Example Scenario
 
 ```json
@@ -178,6 +203,6 @@ tags:
 
 ## Version History
 
-| Version | Date | Changes | Author |
-|---------|------|---------|--------|
-| 1.0 | 2025-11-08 | Initial documentation covering description, flow, detection, and mitigations | Shekhar Chaudhary |
+| Version | Date       | Changes                                                                      | Author            |
+| ------- | ---------- | ---------------------------------------------------------------------------- | ----------------- |
+| 1.0     | 2025-11-08 | Initial documentation covering description, flow, detection, and mitigations | Shekhar Chaudhary |
