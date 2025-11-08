@@ -9,8 +9,8 @@ description: |
   
   The confused deputy pattern (Hardy, 1988) occurs when a trusted intermediary is tricked
   into misusing its authority. This rule detects both classic patterns and modern variations
-  documented in real-world incidents (AWS AppSync 2022, GitHub→AWS OIDC 2023-2025, GCP
-  ConfusedFunction 2024, OAuth IdP Mix-Up research 2016).
+  documented in real-world incidents (FastMCP GHSA-c2jp-c369-7pvx 2025, AWS AppSync 2022,
+  GitHub→AWS OIDC 2023-2025, GCP ConfusedFunction 2024, OAuth IdP Mix-Up research 2016).
   
   Detection Coverage:
   
@@ -45,6 +45,7 @@ description: |
 references:
   - https://github.com/safe-mcp/techniques/SAFE-T1307
   - https://modelcontextprotocol.io/specification/draft/basic/security_best_practices
+  - https://github.com/advisories/GHSA-c2jp-c369-7pvx
   - https://dl.acm.org/doi/10.1145/54289.871709
   - https://datatracker.ietf.org/doc/html/rfc7519
   - https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics
@@ -445,6 +446,11 @@ notes: |
      - Integrate with identity providers for real-time token revocation
   
   DETECTION COVERAGE BY REAL-WORLD INCIDENT:
+  
+  FastMCP Confused Deputy (GHSA-c2jp-c369-7pvx, 2025):
+    Detected by: selection_consent_bypass, selection_idp_mixup
+    Indicators: Consent cookie reuse, authorization code delivered to attacker redirect URI
+    Status: Patched in FastMCP v2.13.0
   
   AWS AppSync Cross-Tenant (2022):
     Detected by: selection_iam_assumption, selection_tenant_violation

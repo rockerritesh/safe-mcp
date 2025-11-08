@@ -4,7 +4,7 @@
 **Tactic**: Privilege Escalation (ATK-TA0004)  
 **Technique ID**: SAFE-T1307  
 **Severity**: High  
-**First Observed**: Not observed in production MCP implementations (theoretical for MCP, but well-documented in OAuth/cloud systems)  
+**First Observed**: Observed in the MCP ecosystem — a confused-deputy-style vulnerability was publicly disclosed for **FastMCP** (GHSA-c2jp-c369-7pvx, Oct 28, 2025); patched in **v2.13.0**. (No public claims of in-the-wild exploitation at disclosure time.) ([GitHub Advisory](https://github.com/advisories/GHSA-c2jp-c369-7pvx))  
 **Last Updated**: 2025-11-08
 
 ## Description
@@ -143,6 +143,8 @@ The Confused Deputy problem dates to Norm Hardy (1988) and remains current in id
 - Token binding mechanisms like mTLS and DPoP provide cryptographic proof of possession ([RFC 8705](https://datatracker.ietf.org/doc/html/rfc8705), [RFC 9449](https://www.rfc-editor.org/rfc/rfc9449.html))
 - Modern authorization frameworks recommend explicit recipient validation ([OAuth 2.0 Security Best Current Practice](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics))
 - MCP's spec adds per-client consent and bans token passthrough ([MCP Security Best Practices](https://modelcontextprotocol.io/specification/draft/basic/security_best_practices))
+
+**MCP implementations:** Beyond general OAuth/cloud examples, the risk has been **observed in an MCP server**: the FastMCP project published an advisory describing a **confused-deputy account-takeover vector** in its auth integration and issued a fix (**v2.13.0**). (At disclosure, there were no public claims of in-the-wild exploitation.) ([GitHub Advisory](https://github.com/advisories/GHSA-c2jp-c369-7pvx))
 
 However, MCP implementations may not enforce these controls, particularly in rapid prototyping or development environments where security configurations are relaxed.
 
@@ -302,7 +304,9 @@ The Confused Deputy problem was formalized by Norm Hardy (1988) with the compile
 
 ### Modern Manifestations (Documented Cases)
 
-While not yet observed in production MCP deployments, confused deputy attacks are well-documented in related technologies:
+#### MCP-Native Example (2025): FastMCP Advisory & Patch
+
+A security advisory for **FastMCP** detailed how its OAuth integration could be abused to create a **confused-deputy account takeover** when fronting Entra ID without DCR, leveraging consent for a static client to deliver an authorization code to an attacker-controlled redirect URI. **Patched in v2.13.0.** ([GitHub Advisory GHSA-c2jp-c369-7pvx](https://github.com/advisories/GHSA-c2jp-c369-7pvx))
 
 #### OAuth/OpenID Connect Mix-Up (IdP Confusion)
 
@@ -364,6 +368,7 @@ Exploiting MCP tool invocation chains with multiple authentication contexts:
 ## References
 - [Model Context Protocol Specification](https://modelcontextprotocol.io/specification)
 - [MCP Security Best Practices - Confused Deputy, Token Passthrough prohibitions, per-client consent requirements](https://modelcontextprotocol.io/specification/draft/basic/security_best_practices)
+- **[FastMCP Security Advisory (GHSA-c2jp-c369-7pvx) - FastMCP Auth Integration Allows for Confused Deputy Account Takeover (Oct 28, 2025)](https://github.com/advisories/GHSA-c2jp-c369-7pvx)**
 - [The Confused Deputy (or why capabilities might have been invented) - Hardy, N. (1988), ACM SIGOPS](https://dl.acm.org/doi/10.1145/54289.871709)
 - [A Comprehensive Formal Security Analysis of OAuth 2.0 - Fett, Küsters, Schmitz (2016)](https://publ.sec.uni-stuttgart.de/fettkuestersschmitz-ccs-2016.pdf)
 - [RFC 7519 - JSON Web Token (JWT) - audience claim requirements](https://datatracker.ietf.org/doc/html/rfc7519)
@@ -389,5 +394,5 @@ Exploiting MCP tool invocation chains with multiple authentication contexts:
 ## Version History
 | Version | Date | Changes | Author |
 |---------|------|---------|--------|
-| 1.0 | 2025-11-08 | Initial documentation of confused deputy attack pattern in MCP context with comprehensive OAuth security references, real-world cases (AWS AppSync, GitHub→AWS OIDC, GCP ConfusedFunction), and MCP-specific mitigations | Arjun Subedi |
+| 1.0 | 2025-11-08 | Initial documentation of confused deputy attack pattern in MCP context with comprehensive OAuth security references, **MCP-native case (FastMCP GHSA-c2jp-c369-7pvx)**, real-world cases (AWS AppSync, GitHub→AWS OIDC, GCP ConfusedFunction), and MCP-specific mitigations | Arjun Subedi |
 
