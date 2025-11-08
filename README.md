@@ -103,7 +103,7 @@ The SAFE-MCP framework defines 14 tactics that align with the MITRE ATT&CK metho
 | ATK-TA0007 | Discovery | SAFE-T1604 | Server Version Enumeration | GET /version or header analysis for vulnerable builds |
 | ATK-TA0007 | Discovery | SAFE-T1605 | Capability Mapping | Ask "what can you do?"; model outlines high-value tools |
 | ATK-TA0007 | Discovery | SAFE-T1606 | Directory Listing via File Tool | List root dir to find sensitive paths |
-| **ATK-TA0008** | **Lateral Movement** | SAFE-T1701 | Cross-Tool Contamination | Using compromised MCP tools to access other connected services and systems |
+| **ATK-TA0008** | **Lateral Movement** | [SAFE-T1701](techniques/SAFE-T1701/README.md) | Cross-Tool Contamination | Using compromised MCP tools to access other connected services and systems |
 | ATK-TA0008 | Lateral Movement | SAFE-T1702 | Shared-Memory Poisoning | Write false tasks to shared vector DB so peer agents execute them |
 | ATK-TA0008 | Lateral Movement | SAFE-T1703 | Tool-Chaining Pivot | Compromise low-priv tool, then leverage it to call another privileged tool indirectly |
 | ATK-TA0008 | Lateral Movement | SAFE-T1704 | Compromised-Server Pivot | Use hijacked server as beachhead to infect other hosts in same IDE/workspace |
