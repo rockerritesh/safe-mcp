@@ -22,10 +22,16 @@ The attack exploits weak trust boundaries and dynamic discovery in federated ide
 
 ## Technical Details
 
+**Root Cause**: Overtrust in federated discovery and insufficient PoP enforcement.
+**Primary Violations**:
+
+* **Least Privilege** (excessive scopes)
+* **Fail Safe Defaults** (trusting unknown issuers)
+* **Complete Mediation** (incomplete claim validation)
 
 ### Key Takeaways
 
-- **PoP proves key possession not legitimacy**. PoP confirms the client holds a key but does not guarantee the issuer authorized the token claims.  
+- **PoP proves key possession not legitimacy**. PoP confirms the client holds a key but does not guarantee the issuer authorized the token claims.
 - **MCP is a trust root**. If an MCP server is rogue or misconfigured, PoP and other protections can be undermined.  
 - **Every hop must validate tokens**. Resource servers must validate issuer, audience, PoP binding, scope, and key origin.  
 - **Treat tokens as untrusted until validated**. Implement strict claim checks and pinned trust anchors.
@@ -334,6 +340,8 @@ event.dataset:auth and (jwt.iss : "*" or jwt.cnf.jkt : "*")
 
 ## Mitigation Strategies
 
+Apply *Defense in Depth* by combining cryptographic binding (PoP), static trust anchors, attestation, and layered validation.
+
 ### Flowchart
 
 ```mermaid
@@ -448,6 +456,17 @@ flowchart LR
 4. **Eradicate** — Revoke tokens, rotate keys, and remove rogue discovery metadata.  
 5. **Recover** — Reissue tokens, restore pinned trust anchors, and validate service access.  
 6. **Review** — Conduct post incident review, update detection rules, and apply configuration hardening.
+
+### Integration with Lifecycle Phases
+
+| Phase              | Application                                                                |
+| ------------------ | -------------------------------------------------------------------------- |
+| **Requirements**   | Define token trust boundaries and issuer policies explicitly.              |
+| **Design**         | Architect PoP enforcement and JWKS validation layers.                      |
+| **Implementation** | Harden libraries (avoid auto-discovery, validate claims fully).            |
+| **Testing**        | Include unit and integration tests for token validation and issuer checks. |
+| **Deployment**     | Configure key rotation and issuer lists via secure CI/CD.                  |
+| **Maintenance**    | Continuously monitor for new token substitution exploits.                  |
 
 ---
 
