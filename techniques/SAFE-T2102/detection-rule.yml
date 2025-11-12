@@ -1,14 +1,14 @@
 title: MCP Agent External API Flooding Detection
 id: B5FD1186-18C3-4BEF-8BD8-895E234E48B4
 status: experimental
-description: Detects potential service disruption attacks through excessive external API calls from MCP agents
+description: Detects potential service disruption via excessive external API calls from MCP agents
 author: SAFE-MCP Team
 date: 2025-01-20
 references:
   - https://github.com/safe-mcp/techniques/SAFE-T2102
-  - https://attack.mitre.org/techniques/T1499/
   - https://attack.mitre.org/techniques/T1499/003/
-  - https://owasp.org/www-project-api-security/
+  - https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/
+  - https://datatracker.ietf.org/doc/html/rfc6585
 logsource:
   product: mcp
   service: agent_execution
@@ -89,11 +89,10 @@ detection:
     selection_identical
 
 falsepositives:
-  - Legitimate bulk data operations with proper rate limiting
-  - Scheduled batch jobs with expected high API call volumes
-  - Load testing and performance evaluation activities
-  - Legitimate retry operations for transient API failures
-  - Data synchronization jobs that require high API call volumes
+  - Legitimate bulk operations with proper throttling
+  - Scheduled batch jobs
+  - Load/perf testing
+  - Legitimate retries for transient failures
 
 level: high
 tags:
