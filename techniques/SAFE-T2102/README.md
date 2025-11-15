@@ -24,9 +24,9 @@ Unlike network‑layer floods, this technique exhausts application/endpoint reso
 ## Attack Vectors
 - **Primary Vector**: Prompt injection or tool output manipulation that induces the agent to call external APIs at high frequency. ([OWASP Foundation](https://owasp.org/www-project-top-10-for-large-language-model-applications/))
 - **Secondary Vectors**: 
-  - Exploiting agent retry logic/backoff to sustain long‑running request patterns. ([OpenAI Help Center](https://help.openai.com/en/articles/6891839-api-error-code-guidance))
+  - Exploiting agent retry logic/backoff to sustain long‑running request patterns.
   - Manipulating error responses (e.g., repeated 5xx/429) to trigger persistent retries.
-  - Abusing parallel tool execution to increase instantaneous throughput. ([InfoQ](https://www.infoq.com/articles/ai-gateways-agent-traffic/))
+  - Abusing parallel tool execution to increase instantaneous throughput.
   - Chaining multi‑step workflows to create cascading call explosions.
   - Cost exhaustion on metered APIs (pay‑per‑use), aligned with OWASP API Security API4:2023 – Unrestricted Resource Consumption. ([OWASP Foundation](https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/))
 
@@ -127,7 +127,7 @@ Multi‑step workflows (N→M fan‑outs) magnify total calls across microservic
 Flooding metered third‑party APIs (SMS, email, LLMs, verification) rapidly accrues costs—explicitly discussed under OWASP API4:2023. ([OWASP Foundation](https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/))
 
 #### Retry‑Logic Exploitation
-Misconfigured exponential backoff or naive "retry‑everything" policies can self‑amplify load when encountering 429/5xx—mirrored in provider guidance that retries must be rate‑aware. ([OpenAI Help Center](https://help.openai.com/en/articles/6891839-api-error-code-guidance))
+Misconfigured exponential backoff or naive "retry‑everything" policies can self‑amplify load when encountering 429/5xx—mirrored in provider guidance that retries must be rate‑aware.
 
 ## Impact Assessment
 - **Confidentiality**: Low (no direct exfiltration), though disruption blocks normal access.
@@ -140,7 +140,7 @@ Risk is well‑established in API security (OWASP API4:2023 – Unrestricted Res
 
 MCP‑specific production incidents: none publicly reported for external API flooding by agents as of 2025‑11‑09 (though MCP components have had other DoS‑class advisories, e.g., MCP Python SDK transport DoS). ([GitHub](https://github.com/modelcontextprotocol/python-sdk/security/advisories))
 
-Analog precedent: A ChatGPT crawler/API vulnerability reported Jan 2025 could have enabled reflective DDoS by causing the platform to fetch massive URL batches in parallel; coverage by reputable outlets (e.g., The Register, CyberScoop) underscores feasibility of agent‑driven floods in production AI systems (distinct from MCP). ([The Register](https://www.theregister.com/2025/01/15/chatgpt_crawler_vulnerability/))
+Analog precedent: A ChatGPT crawler/API vulnerability reported Jan 2025 could have enabled reflective DDoS by causing the platform to fetch massive URL batches in parallel; coverage by reputable outlets (e.g., CyberScoop) underscores feasibility of agent‑driven floods in production AI systems (distinct from MCP).
 
 ## Detection Methods
 
@@ -150,7 +150,7 @@ Analog precedent: A ChatGPT crawler/API vulnerability reported Jan 2025 could ha
 - Highly repetitive calls to the same endpoint from a single session/agent.
 - Cost anomalies on pay‑per‑use APIs.
 - External service health degradation correlated with agent execution windows.
-- Agent logs indicating parallel/batch execution beyond norms. ([InfoQ](https://www.infoq.com/articles/ai-gateways-agent-traffic/))
+- Agent logs indicating parallel/batch execution beyond norms.
 
 ### Detection Rules
 
@@ -232,7 +232,7 @@ tags:
 
 ### Behavioral Indicators
 - Exponential growth in per‑session call frequency (runaway loop).
-- High parallelism relative to baseline. ([InfoQ](https://www.infoq.com/articles/ai-gateways-agent-traffic/))
+- High parallelism relative to baseline.
 - Persistent retries despite 429 responses (mis‑tuned backoff). ([IETF Datatracker](https://datatracker.ietf.org/doc/html/rfc6585))
 - Multiple agents targeting the same external endpoint simultaneously.
 - Quota/cost spikes on third‑party APIs.
@@ -244,12 +244,12 @@ tags:
 2. **[SAFE‑M‑21: Output Context Isolation](../../mitigations/SAFE-M-21/README.md)** — Separate planning from execution; prohibit direct propagation of unvetted instructions from tool outputs into call loops. ([OWASP Foundation](https://owasp.org/www-project-top-10-for-large-language-model-applications/))
 3. **[SAFE‑M‑22: Semantic Output Validation](../../mitigations/SAFE-M-22/README.md)** — Pre‑execute checks that detect flood‑like plans (e.g., "call N=10,000 endpoints quickly").
 4. **[SAFE‑M‑3: AI‑Powered Content Analysis](../../mitigations/SAFE-M-3/README.md)** — Classify intent to flood APIs; block or down‑score risky plans. ([OWASP Foundation](https://owasp.org/www-project-top-10-for-large-language-model-applications/))
-5. **API Call Budgets** — Per‑session/time‑window budgets with hard cutoffs; auto‑terminate or require human approval on exceed. ([InfoQ](https://www.infoq.com/articles/ai-gateways-agent-traffic/))
+5. **API Call Budgets** — Per‑session/time‑window budgets with hard cutoffs; auto‑terminate or require human approval on exceed.
 6. **Request Throttling** — Enforce max RPS per agent; degrade gracefully (token bucket/leaky‑bucket). (HTTP 429 semantics per RFC 6585.) ([IETF Datatracker](https://datatracker.ietf.org/doc/html/rfc6585))
 7. **Whitelist‑Based API Access** — Allow only approved domains/paths; blacklist high‑cost endpoints.
 
 ### Detective Controls
-1. **[SAFE‑M‑11: Behavioral Monitoring](../../mitigations/SAFE-M-11/README.md)** — Real‑time detection of anomalous volumes/fan‑outs per agent/tool/endpoint. ([InfoQ](https://www.infoq.com/articles/ai-gateways-agent-traffic/))
+1. **[SAFE‑M‑11: Behavioral Monitoring](../../mitigations/SAFE-M-11/README.md)** — Real‑time detection of anomalous volumes/fan‑outs per agent/tool/endpoint.
 2. **[SAFE‑M‑20: Anomaly Detection](../../mitigations/SAFE-M-20/README.md)** — ML baselines for RPS and concurrency across agents.
 3. **[SAFE‑M‑12: Audit Logging](../../mitigations/SAFE-M-12/README.md)** — Comprehensive logs of agent calls (endpoint, parameters, status, cost, retry metadata).
 4. **Cost Monitoring** — Real‑time alerts on spend anomalies for metered APIs.
@@ -280,11 +280,8 @@ tags:
 - [MITRE ATT&CK — T1499 Endpoint DoS; T1499.003 Application Exhaustion Flood](https://attack.mitre.org/techniques/T1499/003/) ([MITRE ATT&CK](https://attack.mitre.org/techniques/T1499/003/))
 - [OWASP API Security 2023 — API4:2023 Unrestricted Resource Consumption (availability/cost abuse)](https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/) ([OWASP Foundation](https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/))
 - [HTTP 429 (RFC 6585) — Rate limiting semantics](https://datatracker.ietf.org/doc/html/rfc6585) ([IETF Datatracker](https://datatracker.ietf.org/doc/html/rfc6585))
-- [Unit 42 (Palo Alto) — Agentic AI threats overview (prompt/tool exploitation can subvert agent behavior)](https://unit42.paloaltonetworks.com/agentic-ai-security-threats/) ([Unit 42](https://unit42.paloaltonetworks.com/agentic-ai-security-threats/))
-- [InfoQ (AI Gateways) — Managing agent‑initiated traffic centrally (quota, policy, observability)](https://www.infoq.com/articles/ai-gateways-agent-traffic/) ([InfoQ](https://www.infoq.com/articles/ai-gateways-agent-traffic/))
 - [AutoGPT Docs — Warning about continuous/looping autonomous mode (risk of runaway actions)](https://docs.agpt.co/) ([AutoGPT Documentation](https://docs.agpt.co/))
 - [MCP Ecosystem Advisory (DoS class, non‑external flooding) — MCP Python SDK streamable transport DoS (distinct class; demonstrates DoS considerations in MCP components)](https://github.com/modelcontextprotocol/python-sdk/security/advisories) ([GitHub](https://github.com/modelcontextprotocol/python-sdk/security/advisories))
-- [ChatGPT Crawler/API Vulnerability (Analog) — Reported reflective DDoS potential in production AI system (not MCP)](https://www.theregister.com/2025/01/15/chatgpt_crawler_vulnerability/) ([The Register](https://www.theregister.com/2025/01/15/chatgpt_crawler_vulnerability/))
 - [Model Context Protocol Specification](https://modelcontextprotocol.io/specification)
 - [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 
