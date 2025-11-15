@@ -7,6 +7,15 @@
 **First Observed**: Not publicly reported in MCP production deployments (as of 2025‑11‑09). Related real‑world analogs exist (e.g., ChatGPT crawler/API vulnerability reported in Jan 2025 enabling reflective DDoS), but no MCP‑specific production incident is publicly documented. ([CyberScoop](https://www.cyberscoop.com/))  
 **Last Updated**: 2025-11-09
 
+## Summary
+SAFE-T2102 describes an attack technique where adversaries manipulate MCP-enabled AI agents to generate excessive volumes of requests to external APIs, causing rate limiting, service degradation, or denial of service. This technique exploits the autonomous nature of AI agents and their ability to make repeated tool invocations without human intervention, amplifying application-layer DoS patterns beyond traditional manual or scripted approaches.
+
+Attackers typically inject malicious instructions through prompt injection or tool output manipulation, inducing agents to make high-frequency API calls. The attack can be amplified through parallel execution, retry logic exploitation, and cascading workflows that create exponential growth in request volume. When external APIs return rate limit errors (HTTP 429) or service errors (5xx), the agent's retry mechanisms can compound the load, leading to service disruption.
+
+Key attack vectors include exploiting agent retry logic, manipulating error responses, abusing parallel tool execution, and targeting pay-per-use APIs for cost exhaustion. The technique maps to MITRE ATT&CK T1499.003 (Application Exhaustion Flood) and aligns with OWASP API Security API4:2023 (Unrestricted Resource Consumption).
+
+Mitigation strategies focus on implementing strict rate limiting and quota controls, isolating agent planning from execution, validating agent plans before execution, and monitoring for anomalous API call patterns. While no MCP-specific production incidents have been publicly reported as of 2025-11-09, real-world analogs such as the ChatGPT crawler/API vulnerability demonstrate the feasibility of agent-driven API flooding attacks.
+
 ## Description
 Service Disruption via External API Flooding is an attack technique where adversaries manipulate MCP‑enabled AI agents to generate excessive volumes of requests to external APIs, causing rate limiting, service degradation, or denial of service. This leverages the agent's autonomous tool‑invocation behavior (including retries, planning loops, and parallelization) to amplify typical application‑layer DoS patterns such as MITRE ATT&CK T1499 / T1499.003 Application Exhaustion Flood. ([MITRE ATT&CK](https://attack.mitre.org/techniques/T1499/003/))
 
