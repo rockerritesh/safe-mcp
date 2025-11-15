@@ -4,8 +4,10 @@
 **Tactic**: Credential Access (ATK-TA0006)  
 **Technique ID**: SAFE-T1504  
 **Severity**: High  
-**First Observed**: Not observed in production (Theoretical based on MCP authorization patterns)  
+**First Observed**: 2025-04 (lab-demonstrated MCP credential theft; no public reports yet of token-returning MCP tools exploited in production)  
 **Last Updated**: 2025-11-15
+
+> **Note**: MCP-based credential theft has been demonstrated in controlled experiments (e.g., MCP Safety Audit exfiltrating OpenAI and HuggingFace API keys via MCP tools), and token-returning tools such as BaseHub's `get_token` are already deployed in production MCP servers. However, as of 2025-11, there are no publicly confirmed incidents where an attacker abused a token-debug MCP tool (e.g., `session.token`, `get_access_token`) to steal tokens directly via API responses in a real-world breach.
 
 ## Description
 Token Theft via API Response is a credential access technique where adversaries manipulate AI agents to invoke MCP tools that expose sensitive tokens (OAuth access tokens, session tokens, or API keys) directly in their responses. This attack exploits debug or diagnostic tools that were designed to help developers troubleshoot authentication issues but inadvertently create a direct path for token exfiltration.
@@ -228,10 +230,14 @@ tags:
 - [Model Context Protocol Specification](https://modelcontextprotocol.io/specification)
 - [MCP Authorization Specification](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization)
 - [MCP Security Best Practices](https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices)
-- [ModelContextProtocol Security - Token Theft TTPs](https://modelcontextprotocol-security.io/ttps/data-exfiltration/token-theft/)
-- [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+- [MCP Safety Audit: LLMs with the Model Context Protocol Allow Major Security Exploits - Paper, April 2025](https://arxiv.org/abs/2504.03767)
+- [ModelContextProtocol Security - Token Theft/Overreach TTP](https://modelcontextprotocol-security.io/ttps/data-exfiltration/token-theft/)
+- [BaseHub MCP Server Documentation - get_token tool](https://docs.basehub.com/ai/mcp)
+- [Model Context Protocol Security: October'25 Update](https://wiiwrite.medium.com/model-context-protocol-security-october25-update-69b7ef8b537d)
+- [Legit Security - Model Context Protocol Security: MCP Risks and Best Practices](https://www.legitsecurity.com/aspm-knowledge-base/model-context-protocol-security)
 - [Pillar Security - The Security Risks of Model Context Protocol (MCP)](https://www.pillar.security/blog/the-security-risks-of-model-context-protocol-mcp)
 - [WorkOS - The Complete Guide to MCP Security](https://workos.com/blog/mcp-security-risks-best-practices)
+- [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 - [OAuth 2.1 Security Best Current Practice](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics)
 
 ## MITRE ATT&CK Mapping
@@ -241,4 +247,4 @@ tags:
 ## Version History
 | Version | Date | Changes | Author |
 |---------|------|---------|--------|
-| 1.0 | 2025-11-15 | Initial documentation | SAFE-MCP Team |
+| 1.0 | 2025-11-15 | Initial documentation | Arjun Subedi (Astha.ai) |

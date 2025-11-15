@@ -7,14 +7,16 @@ description: >
   token-like values in tool results. Field names are examples and MUST be
   adapted to the local MCP logging schema.
 
-author: "SAFE-MCP community (draft via GPT-5 Pro)"
+author: "SAFE-MCP Team"
 date: 2025/11/15
 references:
-  - "https://github.com/SAFE-MCP/safe-mcp"
-  - "https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization"
-  - "https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices"
+  - "https://github.com/safe-mcp/techniques/SAFE-T1504"
   - "https://modelcontextprotocol-security.io/ttps/data-exfiltration/token-theft/"
+  - "https://arxiv.org/abs/2504.03767"
+  - "https://docs.basehub.com/ai/mcp"
   - "https://www.pillar.security/blog/the-security-risks-of-model-context-protocol-mcp"
+  - "https://www.legitsecurity.com/aspm-knowledge-base/model-context-protocol-security"
+  - "https://attack.mitre.org/techniques/T1528/"
 tags:
   - "attack.credential-access"
   - "attack.T1528"
