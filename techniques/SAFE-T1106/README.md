@@ -67,7 +67,11 @@ class LoopDetector:
         self.call_history: Dict[str, List[Tuple[int, str]]] = defaultdict(list)
     
     def _generate_call_hash(self, tool_name: str, args: dict) -> str:
-        """Create a unique hash for a tool call based on name and arguments"""
+        """Create a unique hash for a tool call based on name and arguments
+        
+        Note: MD5 is used here for non-cryptographic purposes (content identification).
+        For security-sensitive applications, use SHA-256 or another secure hash function.
+        """
         call_signature = json.dumps({"tool": tool_name, "args": args}, sort_keys=True)
         return hashlib.md5(call_signature.encode()).hexdigest()
     
@@ -340,6 +344,6 @@ tags:
 | Version | Date       | Changes               | Author           |
 |---------|------------|-----------------------|------------------|
 | 1.0     | 2025-08-10 | Initial documentation | Sunil Dhakal |
-| 1.1     | 2025-01-27 | Added beginner-friendly examples section with practical code demonstrations for loop detection, prevention, and log analysis | Satbir Singh |
+| 1.1     | 2025-11-16 | Added beginner-friendly examples section with practical code demonstrations for loop detection, prevention, and log analysis | Satbir Singh |
 
 
