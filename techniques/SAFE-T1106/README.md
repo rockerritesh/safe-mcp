@@ -340,6 +340,6 @@ tags:
 | Version | Date       | Changes               | Author           |
 |---------|------------|-----------------------|------------------|
 | 1.0     | 2025-08-10 | Initial documentation | Sunil Dhakal |
-| 1.1     | 2025-01-27 | Added beginner-friendly examples section with practical code demonstrations for loop detection, prevention, and log analysis | The SAFE-MCP Authors |
+| 1.1     | 2025-01-27 | Added beginner-friendly examples section with practical code demonstrations for loop detection, prevention, and log analysis | Satbir Singh |
 
 
