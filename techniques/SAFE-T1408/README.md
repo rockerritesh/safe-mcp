@@ -178,8 +178,12 @@ tags:
 ---
 
 ## Related Techniques
-- [SAFE-T4010](../SAFE-T4010/README.md): Token Replay – Downgrade enables replay attacks  
-- [SAFE-T4015](../SAFE-T4015/README.md): Session Hijacking – Downgrade facilitates hijacking via stolen tokens
+- [SAFE-T1007](../SAFE-T1007/README.md): OAuth Authorization Phishing – Exploit OAuth flows to steal access tokens
+- [SAFE-T1009](../SAFE-T1009/README.md): Authorization Server Mix-up – Client follows redirect to look-alike server
+- [SAFE-T1202](../SAFE-T1202/README.md): OAuth Token Persistence - Theft and reuse of OAuth access/refresh tokens for persistent access
+- [SAFE-T1308](../SAFE-T1308/README.md): Token Scope Substitution - Swaps a limited-scope token with one that has broader permissions
+- [SAFE-T1507](../SAFE-T1507/README.md): Authorization Code Interception - Man-in-the-browser attack steals OAuth authorization codes during the redirect flow
+- [SAFE-T1706](../SAFE-T1706/README.md): OAuth Token Pivot Replay - Reuses OAuth tokens across different services that fail to validate audience claims
 
 ---
 
@@ -197,6 +201,8 @@ tags:
 ## MITRE ATT&CK Mapping
 - [T1556.007 - Modify Authentication Process: OAuth Abuse](https://attack.mitre.org/techniques/T1556/007/)  
 - [T1078 - Valid Accounts](https://attack.mitre.org/techniques/T1078/)
+- [T1550 - Use Alternate Authentication](https://attack.mitre.org/techniques/T1550/)
+- [T1566.002 - Phishing: Spearphishing Link](https://attack.mitre.org/techniques/T1566/002/)
 
 ---
 
