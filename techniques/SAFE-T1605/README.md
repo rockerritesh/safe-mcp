@@ -49,9 +49,13 @@ How to prevent or minimize this attack:
 
 ## References
 
-- [MITRE ATT&CK Discovery Tactic (TA0007)](https://attack.mitre.org/tactics/TA0007/)  
-- [MITRE ATT&CK T1592 – Gather Victim Host Information](https://attack.mitre.org/techniques/T1592/)  
-- [Model Context Protocol Specification](https://modelcontextprotocol.io/specification)  
+- [MITRE ATT&CK Discovery Tactic (TA0007)](https://attack.mitre.org/tactics/TA0007/)
+- [MITRE ATT&CK T1592 – Gather Victim Host Information](https://attack.mitre.org/techniques/T1592/)
+- [Model Context Protocol Specification](https://modelcontextprotocol.io/specification)
+- [OWASP LLM Top 10 – LLM01 Prompt Injection Mitigations](https://llmtop10.com/llm01-prompt-injection/#mitigations)
+- [OWASP ASVS v4.0.3 – Access Control Verification](https://github.com/OWASP/ASVS/blob/master/4.0/en/0x10-V4-Access-Control.md)
+- [OWASP Input Validation Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html)
+- [NIST SP 800-53 Rev. 5, Update 1 (AU-6, SI-4, AC-6)](https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final)
 - [Invariant Labs: MCP Safety Audit Research](https://arxiv.org/abs/2504.03767)
 
 ## MITRE ATT&CK Mapping
