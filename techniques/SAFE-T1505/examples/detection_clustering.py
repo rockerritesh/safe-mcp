@@ -7,7 +7,7 @@ Author: Sumit Yadav (rockerritesh4@gmail.com)
 Date: 2025-11-16
 
 Research Foundation:
-- Supervised learning algorithms (arXiv:0806.2414)
+- Supervised learning algorithms (arXiv:2204.12868)
 - Metric learning (arXiv:1306.6709)
 - Embedding redundancy detection (arXiv:2506.01435)
 

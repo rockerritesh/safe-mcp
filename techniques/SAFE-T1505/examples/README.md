@@ -198,7 +198,7 @@ All implementations are based on peer-reviewed research:
    - Word2Vec: https://arxiv.org/abs/1301.3781
 
 2. **Detection Methods**
-   - Supervised Learning: https://arxiv.org/abs/0806.2414
+   - Supervised Learning: https://arxiv.org/abs/2204.12868
    - Metric Learning: https://arxiv.org/abs/1306.6709
    - Embedding Security: https://arxiv.org/abs/2509.06338
 
