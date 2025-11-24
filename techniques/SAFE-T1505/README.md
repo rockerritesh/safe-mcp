@@ -1,4 +1,4 @@
-# SAFE-T1505: API Key Exfiltration via Semantic Embedding Manipulation
+# SAFE-T1505: In-Memory Secret Extraction
 
 ## Overview
 **Tactic**: Credential Access (ATK-TA0006), Exfiltration (ATK-TA0010)  
@@ -9,7 +9,7 @@
 **Author**: Sumit Yadav (rockerritesh4@gmail.com)
 
 ## Description
-API Key Exfiltration via Semantic Embedding Manipulation is a sophisticated attack technique that exploits the semantic understanding capabilities of embedding models and vector databases to identify, extract, and exfiltrate API keys and other credentials from AI systems. Unlike traditional pattern-matching approaches, this technique leverages the semantic similarity between prompts and stored embeddings to circumvent standard security controls.
+In-Memory Secret Extraction is a sophisticated attack technique that exploits the semantic understanding capabilities of embedding models and vector databases to identify, extract, and exfiltrate API keys and other credentials from AI systems. Unlike traditional pattern-matching approaches, this technique leverages the semantic similarity between prompts and stored embeddings to circumvent standard security controls.
 
 Attackers exploit the fact that modern LLM systems use embedding models (such as Word2Vec, BERT, or sentence transformers) to convert text into high-dimensional vector representations. By crafting queries with high semantic similarity to credential-related content, adversaries can retrieve API keys from vector stores, prompt caches, or model contexts without triggering keyword-based detection systems. This technique represents a fundamental vulnerability in how AI systems handle and protect sensitive information through semantic analysis.
 
@@ -297,7 +297,7 @@ Security researchers have documented emerging threats in embedding-based systems
 
 ```yaml
 # EXAMPLE SIGMA RULE - Not comprehensive
-title: API Key Exfiltration via Semantic Embedding Manipulation
+title: In-Memory Secret Extraction
 id: a7f3b2c1-89d4-4e2a-bc3d-567890abcdef
 status: experimental
 description: Detects potential API key exfiltration through semantic embedding manipulation
@@ -463,5 +463,5 @@ tags:
 ## Version History
 | Version | Date | Changes | Author |
 |---------|------|---------|--------|
-| 1.0 | 2025-11-16 | Initial documentation of API Key Exfiltration via Semantic Embedding Manipulation | Sumit Yadav (rockerritesh4@gmail.com) |
+| 1.0 | 2025-11-16 | Initial documentation of In-Memory Secret Extraction | Sumit Yadav (rockerritesh4@gmail.com) |
 

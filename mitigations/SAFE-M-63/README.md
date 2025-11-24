@@ -14,7 +14,7 @@ Embedding-Based API Key Detection and Filtering is a comprehensive security cont
 The control implements real-time semantic analysis of all incoming queries, calculating cosine similarity against known credential-seeking patterns, and blocking or flagging queries that exceed configurable similarity thresholds. This approach is effective against the semantic manipulation techniques described in SAFE-T1505 where attackers craft queries that bypass keyword filters but maintain semantic similarity to credential extraction attempts.
 
 ## Mitigates
-- [SAFE-T1505](../../techniques/SAFE-T1505/README.md): API Key Exfiltration via Semantic Embedding Manipulation
+- [SAFE-T1505](../../techniques/SAFE-T1505/README.md): In-Memory Secret Extraction
 - [SAFE-T1501](../../techniques/SAFE-T1501/README.md): Full-Schema Poisoning (FSP)
 - [SAFE-T1102](../../techniques/SAFE-T1102/README.md): Prompt Injection (Multiple Vectors)
 

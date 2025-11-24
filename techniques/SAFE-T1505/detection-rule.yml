@@ -1,8 +1,8 @@
-title: API Key Exfiltration via Semantic Embedding Manipulation
+title: In-Memory Secret Extraction
 id: a7f3b2c1-89d4-4e2a-bc3d-567890abcdef
 status: experimental
 description: |
-  Detects potential API key exfiltration attempts through semantic embedding manipulation.
+  Detects potential in-memory secret extraction attempts through semantic embedding manipulation.
   This rule identifies queries with high semantic similarity to credential-related prompts,
   embedding anomalies in vector stores, prompt cache exploitation, and activation analysis patterns.
   Based on research: arXiv:2509.06338, arXiv:2502.07776, arXiv:2509.21884
