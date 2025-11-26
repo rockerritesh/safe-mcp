@@ -108,34 +108,7 @@ No universal patch exists; mitigations vary by provider.
 
 Important: This Sigma rule is example only and must be adapted.
 
-```yaml
-title: Suspicious Hidden Data in MCP Response Blocks
-id: e2f5b4e0-1e4b-4b37-9d25-d8dfc77cf191
-status: experimental
-description: Detects potential steganographic or encoded data hidden in MCP responses.
-author: Rajiv Shrestha
-date: 2025-11-26
-references:
-  - https://github.com/safe-mcp/techniques/SAFE-T1912
-logsource:
-  product: mcp
-  service: response
-detection:
-  selection:
-    response.text|contains:
-      - "ZW"         # base64 patterns
-      - "\\u200b"     # zero-width characters
-      - "0x"         # hex blob sequences
-  condition: selection
-falsepositives:
-  - legitimate base64 assets
-  - compressed configuration data
-level: high
-tags:
-  - attack.exfiltration
-  - attack.t1020
-  - safe.t1912
-```
+See `detection-rule.yml` in this directory for the example detection rule used with this technique.
 
 ### Behavioral Indicators
 
