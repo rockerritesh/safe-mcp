@@ -55,7 +55,7 @@ sequenceDiagram
 ```
 
 1. **Token Acquisition**: Attacker obtains valid OAuth access or refresh tokens through:
-   - Infrastructure Token Theft (SAFE-T1506) - stealing tokens from logs, TLS termination proxies, or infrastructure components
+   - Infrastructure Token Theft - stealing tokens from logs, TLS termination proxies, or infrastructure components
    - OAuth Token Persistence Abuse (SAFE-T1202) - theft and reuse of tokens for persistent access
    - Compromised OAuth Flows (SAFE-T1007 / SAFE-T1009) - phishing for OAuth consent or authorization-server mix-up
    - Generic JWT theft via XSS, misconfigured storage, or transport interception
@@ -84,7 +84,7 @@ Tokens include an `aud` claim, but:
 - `aud` is set to a generic value such as `https://api.internal.example.com/`, and
 - Resource servers do not enforce that `aud` matches their specific service.
 
-A token issued when the agent uses the projects-api tool is logged accidentally (SAFE-T1506). An attacker reuses that token directly against billing-api. Since billing-api only verifies the token signature but not the service-specific audience, it accepts the token and grants access to billing operations—classic cross-service relay behavior.
+A token issued when the agent uses the projects-api tool is logged accidentally. An attacker reuses that token directly against billing-api. Since billing-api only verifies the token signature but not the service-specific audience, it accepts the token and grants access to billing operations—classic cross-service relay behavior.
 
 **Scenario B – MCP Server Accepts Any Token from a Trusted IdP**
 
@@ -117,7 +117,7 @@ An MCP server is configured to trust an IdP but only validates token signatures.
 
 ```yaml
 title: OAuth Token Cross-Service Replay Detection
-id: 00000000-0000-0000-0000-000000000000
+id: a7b8c9d0-e1f2-4a5b-8c9d-0e1f2a3b4c5d
 status: experimental
 description: Detects potential OAuth token pivot replay when same token is used across multiple services
 author: SAFE-MCP Team
@@ -205,8 +205,6 @@ tags:
 
 ## Related Techniques
 - [SAFE-T1202](../SAFE-T1202/README.md): OAuth Token Persistence - Focuses on long-term reuse of tokens for the same service, while SAFE-T1706 uses tokens to pivot into different services
-- [SAFE-T1506](../SAFE-T1506/README.md): Infrastructure Token Theft - Covers how tokens are stolen, while SAFE-T1706 describes replay at other services
-- [SAFE-T1707](../SAFE-T1707/README.md): CSRF Token Relay - Focuses on cross-resource attacks within the same resource server, while SAFE-T1706 targets cross-service pivoting
 - [SAFE-T1701](../SAFE-T1701/README.md): Cross-Tool Contamination - Involves moving data between MCP tools via shared context, while SAFE-T1706 uses tokens as pivot artifacts
 
 ## References
