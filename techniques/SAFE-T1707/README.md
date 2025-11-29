@@ -16,7 +16,7 @@ Traditional CSRF relies on browsers automatically attaching credentials (like co
 - A web app or MCP-connected portal uses a single access token with broad scope to manage multiple resources, chosen via request parameters (e.g., `project=foo`, `project=bar`).
 - One or more sensitive endpoints (like "switch active project", "set IAM policy", "connect MCP agent to resource X") are vulnerable to CSRF (missing anti-CSRF tokens, weak `SameSite` settings, or relying solely on cookies).
 
-In this situation, an attacker can use CSRF to cause the app to call the resource server with the victim's stored OAuth token, but target a different resource (for example, a project or dataset the victim has access to but did not intend to modify). This is lateral movement at the application/resource level: instead of moving between different services (SAFE-T1706), the attacker pivots between resources within the same service by relaying a token through CSRF-vulnerable endpoints and APIs.
+In this situation, an attacker can use CSRF to cause the app to call the resource server with the victim's stored OAuth token, but target a different resource (for example, a project or dataset the victim has access to but did not intend to modify). This is lateral movement at the application/resource level: instead of moving between different services (as in cross-service token replay attacks), the attacker pivots between resources within the same service by relaying a token through CSRF-vulnerable endpoints and APIs.
 
 The OAuth 2.0 authorization framework explicitly calls out CSRF as a threat: the spec notes that an attacker can cause the user-agent to follow a malicious URI to a trusting server using a valid session or authorization context. CSRF risks in OAuth deployments and real-world OpenID Connect implementations have been studied in depth and shown to be common when state and related protections are not properly implemented.
 
@@ -115,7 +115,7 @@ In an MCP-like admin portal, CSRF vulnerabilities on endpoints that link externa
 
 ```yaml
 title: CSRF Token Relay Detection (SAFE-T1707)
-id: 00000000-0000-0000-0000-000000000000
+id: b8c9d0e1-f2a3-4b5c-9d0e-1f2a3b4c5d6e
 status: experimental
 description: Detects potential CSRF Token Relay attacks on sensitive endpoints that trigger OAuth-backed multi-resource operations
 author: SAFE-MCP Team
@@ -213,9 +213,7 @@ tags:
    - Conduct security testing including CSRF tests on admin portals and MCP configuration UIs
 
 ## Related Techniques
-- [SAFE-T1706](../SAFE-T1706/README.md): OAuth Token Pivot Replay - Cross-service pivot using the same access token across multiple resource servers, while SAFE-T1707 focuses on cross-resource pivot within a single resource server
 - [SAFE-T1202](../SAFE-T1202/README.md): OAuth Token Persistence - Long-lived tokens and weak revocation make CSRF-driven token relay more dangerous by extending the time window for abuse
-- [SAFE-T1506](../SAFE-T1506/README.md): Infrastructure Token Theft - Stolen tokens can be planted or reused in CSRF-like flows if an attacker can induce an application to store and use them
 - [SAFE-T1304](../SAFE-T1304/README.md): Credential Relay Chain - CSRF Token Relay can be part of a broader chain where a token is stolen via one tool and then relayed through a CSRF-vulnerable endpoint
 
 ## References
@@ -233,9 +231,8 @@ tags:
 - [Google Cloud – Compute Engine Service Accounts](https://cloud.google.com/compute/docs/access/service-accounts)
 
 ## MITRE ATT&CK Mapping
-- [T1550.001 - Use Alternate Authentication Material: Application Access Token](https://attack.mitre.org/techniques/T1550/001/) - Uses valid application access tokens as alternate authentication material to perform actions on additional resources
-- [T1528 - Steal Application Access Token](https://attack.mitre.org/techniques/T1528/) - Many instances rely on stolen or misused access tokens as a starting point
-- [CWE-352 - Cross-Site Request Forgery (CSRF)](https://cwe.mitre.org/data/definitions/352.html) - SAFE-T1707 is a concrete exploitation pattern of CSRF combined with OAuth tokens in MCP contexts
+- [T1550.001 - Use Alternate Authentication Material: Application Access Token](https://attack.mitre.org/techniques/T1550/001/) - Uses valid application access tokens as alternate authentication material to perform actions on additional resources within the same resource server
+- [CWE-352 - Cross-Site Request Forgery (CSRF)](https://cwe.mitre.org/data/definitions/352.html) - SAFE-T1707 is a concrete exploitation pattern of CSRF combined with OAuth tokens in MCP contexts. CSRF enables the attacker to trigger unintended token usage across resources.
 
 ## Version History
 | Version | Date | Changes | Author |
