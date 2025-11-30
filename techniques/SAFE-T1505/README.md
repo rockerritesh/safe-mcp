@@ -455,10 +455,12 @@ tags:
 - [NIST Privacy Framework](https://www.nist.gov/privacy-framework)
 
 ## MITRE ATT&CK Mapping
-- [T1552 - Unsecured Credentials](https://attack.mitre.org/techniques/T1552/)
-- [T1555 - Credentials from Password Stores](https://attack.mitre.org/techniques/T1555/)
-- [T1041 - Exfiltration Over C2 Channel](https://attack.mitre.org/techniques/T1041/)
-- [T1213 - Data from Information Repositories](https://attack.mitre.org/techniques/T1213/)
+
+**Note**: The following mappings represent the closest analogues in the MITRE ATT&CK framework. As of 2025, ATT&CK does not include specific techniques for AI/ML systems, vector databases, or embedding stores. These mappings are provided to help organizations align SAFE-MCP techniques with existing security frameworks and controls.
+
+- [T1552 - Unsecured Credentials](https://attack.mitre.org/techniques/T1552/) - *Closest match*: Extraction of credentials from unsecured storage (vector stores/embedding databases are analogous to unsecured credential storage)
+- [T1041 - Exfiltration Over C2 Channel](https://attack.mitre.org/techniques/T1041/) - Exfiltration of extracted credentials to external systems
+- [T1213 - Data from Information Repositories](https://attack.mitre.org/techniques/T1213/) - Querying and extracting sensitive information from data repositories (vector stores qualify as information repositories)
 
 ## Version History
 | Version | Date | Changes | Author |
