@@ -100,7 +100,7 @@ graph TD
 - **Scope**: Network-wide – a single workspace compromise can fan out across multiple services, tenants, or environments.
 
 ### Current Status (2025)
-According to the [LangChain Security Guidance](https://python.langchain.com/docs/security/), frameworks now recommend per-tool credential isolation and outbound server allowlisting, yet many MCP clients still default to shared caches and permissive connectors until administrators manually enforce those controls.
+LangChain’s published [security policy](https://docs.langchain.com/oss/python/security-policy) focuses on disclosure channels and baseline security expectations, underscoring that frameworks still leave per-tool credential isolation and outbound server allowlisting to the MCP operators who deploy them—defaults often remain permissive until administrators intervene.
 
 ## Detection Methods
 
@@ -197,9 +197,9 @@ tags:
 
 ## MITRE ATT&CK Mapping
 
-- [T1021 – Remote Services](https://attack.mitre.org/techniques/T1021/)
 - [T1078 – Valid Accounts](https://attack.mitre.org/techniques/T1078/)
 - [T1550 – Use Alternate Authentication Material](https://attack.mitre.org/techniques/T1550/)
+- [T1528 – Steal Application Access Token](https://attack.mitre.org/techniques/T1528/)
 
 ## Version History
 
