@@ -128,7 +128,7 @@ description: Detects signs of suppressed disclosure in agent prompts and output
 author: SAFE-MCP Team
 date: 2025-10-25
 references:
-  - https://github.com/SAFE-MCP/safe-mcp/techniques/SAFE-T1404
+  - https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1404/README.md
 logsource:
   product: mcp
   service: host

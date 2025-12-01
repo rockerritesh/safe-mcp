@@ -132,5 +132,6 @@ def test_tags_and_level():
     tags = set(rule["tags"])
     assert "attack.defense-evasion" in tags
     assert "attack.t1562" in tags
+    assert "attack.t1564" in tags
     assert "safe.t1404" in tags
     assert rule.get("level") in ["low", "medium", "high", "critical"]
