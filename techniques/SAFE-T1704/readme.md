@@ -35,6 +35,31 @@ In AI‑integrated environments, MCP servers often operate with elevated trust: 
 - There exists at least one trust relationship (shared workspace, shared context, shared credentials) between the server and other clients.
 
 ## Attack Flow
+```mermaid
+flowchart TD
+
+A[Start: Attacker Identifies Output Channel] --> B[Prepare Hidden Payload<br/>Whitespace Unicode Invisible Characters]
+
+B --> C[Prime Model to Produce Predictable Structure<br/>Example Code Blocks]
+
+C --> D[Inject Hidden Data into Model Response]
+
+D --> E[Model Outputs Response with Embedded Payload]
+
+E --> F[User Copies AI Output<br/>Code Block or Structured Text]
+
+F --> G[Hidden Data Travels via User Action<br/>Paste Commit Upload]
+
+G --> H[Payload Reaches Attacker Controlled System]
+
+H --> I[Attacker Extracts Embedded Data]
+
+I --> J[Stealth Persistence or Retriggering]
+
+classDef phase fill:#1f2937,stroke:#ffffff,color:#ffffff,border-radius:6px;
+class A,B,C,D,E,F,G,H,I,J phase;
+```
+
 
 ### Initial Stage: Server Compromise
 Attacker compromises a server used by developers, AI tools, or agents.
