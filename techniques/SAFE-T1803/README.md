@@ -32,7 +32,7 @@ Rather than deploying custom exfiltration implants, adversaries (or misaligned a
   - **M1018 – User Account Management** — least privilege for DB roles and service accounts used by MCP tools, including strong governance for production vs analytics access [3][11][12].
 
 - **OWASP Top‑10 for LLM Applications (2025)**
-  - **LLM01/LLM03/LLM05** — Prompt injection, data supply-chain issues, and excessive agency can all lead to agents triggering overly broad queries or export/backup tools that dump production databases [4][9][13][14].
+  - **LLM01/LLM03/LLM05** — Prompt injection, data supply-chain issues, and excessive agency can all lead to agents triggering overly broad queries or export/backup tools that dump production databases [4][9][13].
 
 ---
 
@@ -47,7 +47,7 @@ A typical MCP deployment connects an LLM host to one or more MCP servers that ex
    Some MCP tools wrap logical backup utilities or managed-DB admin APIs (for example, `pg_dump`, `mysqldump`, `BACKUP DATABASE`, export endpoints). If these are exposed as general-purpose tools (“backup database”, “export table”), an LLM agent can be convinced to run full-schema or full-database dumps, often compressed and ready for exfiltration [2][3][7][10].
 
 3) **Cloud Analytics and Data-Lake Export.**  
-   In cloud environments, MCP servers may have tools that read from managed warehouses or lakes (e.g., BigQuery, Snowflake, Redshift) and then export to object storage for downstream jobs. Attackers can redirect this machinery to bulk-export high-value datasets (user profiles, telemetry, logs) into attacker-chosen buckets or paths [3][4][11][15].
+   In cloud environments, MCP servers may have tools that read from managed warehouses or lakes (e.g., BigQuery, Snowflake, Redshift) and then export to object storage for downstream jobs. Attackers can redirect this machinery to bulk-export high-value datasets (user profiles, telemetry, logs) into attacker-chosen buckets or paths [3][4][11][14].
 
 4) **Multi-Source Aggregation for Enrichment.**  
    Modern analytics often join across multiple sources. An attacker can chain multiple MCP queries and exports to build a **joined, enriched dataset** (for example, users + auth logs + payment history), then stage it as a single, exfil-ready artifact.
@@ -107,7 +107,7 @@ MCP query tools (`sql_query`, `db.execute`, etc.) execute broad SELECT statement
 Wrapper tools around database backup utilities or managed-DB export APIs (for example, `pg_dump`, `mysqldump`, `BACKUP DATABASE`, “export table”) are invoked by agents to create full logical backups of schemas, databases, or warehouses, which are then staged for exfiltration.
 
 **SAFE‑T1803.003 — Analytics Export / Data-Lake Extraction.**  
-MCP analytics tools read from warehouses/lakes and export datasets (CSV, Parquet, Avro) to object storage. Attackers repurpose these capabilities to bulk-export PII, logs, or internal telemetry to attacker-controlled or weakly monitored buckets [3][4][11][15].
+MCP analytics tools read from warehouses/lakes and export datasets (CSV, Parquet, Avro) to object storage. Attackers repurpose these capabilities to bulk-export PII, logs, or internal telemetry to attacker-controlled or weakly monitored buckets [3][4][11][14].
 
 **SAFE‑T1803.004 — Multi-Source Enriched Dump.**  
 Agents orchestrate multiple tools and queries to join across sources (user profiles, auth logs, billing, support tickets), then write a **single enriched dump** containing a highly valuable composite dataset for downstream exfiltration.
@@ -120,7 +120,7 @@ Agents orchestrate multiple tools and queries to join across sources (user profi
 Identify which MCP servers and tools are available to the LLM: generic SQL/DB tools, warehouse/lake query tools, export/backup utilities, HTTP/cloud SDK tools, and file tools. Determine where high-value data lives (production OLTP DBs, analytics warehouses, data lakes, log storage, backups) and which roles/credentials the MCP tools use [1][2][3][11].
 
 **Gain Control of the Agent Path.**  
-Use prompt injection, compromised MCP servers, stolen API keys, or misconfigured auto-approval policies to influence which tools the agent calls and with what arguments [4][9][13][14]. Compromise configuration or tool metadata so agents “helpfully” choose bulk export code paths.
+Use prompt injection, compromised MCP servers, stolen API keys, or misconfigured auto-approval policies to influence which tools the agent calls and with what arguments [4][9][13]. Compromise configuration or tool metadata so agents “helpfully” choose bulk export code paths.
 
 **Discover Schema and Sensitivity.**  
 Leverage database metadata queries (for example, `information_schema`, sys catalogs, warehouse information functions) to enumerate tables, columns, and approximate sensitivity (names like `users`, `customers`, `payments`, `tokens`, `session_logs`). Use small sampled queries to validate data value and distribution.
@@ -164,7 +164,7 @@ Concentration of queries on tables with PII, auth, or payment data, especially w
 **4. Staging in New or Unusual Destinations.**  
 Creation of new buckets, paths, or folders that suddenly receive large dumps, particularly where:
 - ACLs are broader than usual (public or cross-account).  
-- The destination is rarely or never used in baseline workloads [3][8][11][15].
+- The destination is rarely or never used in baseline workloads [3][8][11][14].
 
 **5. Suspicious Timing and Context.**  
 Database dumps shortly after:
@@ -197,7 +197,7 @@ Detect **MCP tool invocations** that:
    - Warehouse export jobs writing large datasets to storage and/or  
    - Object-storage writes of large files to unusual paths or buckets
 
-Combine this with filters for non-maintenance time windows, non-DBA service accounts, and new/unusual destinations to prioritize likely malicious or uncontrolled incidents [1][3][8][11][15].
+Combine this with filters for non-maintenance time windows, non-DBA service accounts, and new/unusual destinations to prioritize likely malicious or uncontrolled incidents [1][3][8][11][14].
 
 ---
 
@@ -256,8 +256,8 @@ Each block heading carries a single mitigation tag, following SAFE‑T100x style
 - Harden MCP servers and DB/warehouse connectors:
   - Validate and sanitize all user-provided SQL parameters.  
   - Prevent prompt-driven arbitrary SQL where possible; prefer constrained query templates.  
-  - Use secure network paths (TLS, private links) and avoid exposing DBs directly to the internet [2][3][11][15].  
-- Align with OWASP LLM and GenAI security guidance, including secure design of plugins/tools and defense against prompt injection and excessive agency [4][9][13][14].
+  - Use secure network paths (TLS, private links) and avoid exposing DBs directly to the internet [2][3][11][14].  
+- Align with OWASP LLM and GenAI security guidance, including secure design of plugins/tools and defense against prompt injection and excessive agency [4][9][13].
 
 ---
 
@@ -281,7 +281,7 @@ Conduct validation in isolated environments with synthetic or non-critical data:
   Use test datasets and buckets; simulate large-scale exports and confirm that cloud logs, SIEM alerts, and MCP tool logs all correlate.
 
 - **End-to-End Exfiltration Exercises.**  
-  Integrate SAFE-T1803 scenarios into red team and purple team exercises, followed by exfiltration techniques, focusing on how quickly defenders can detect, stop, and investigate bulk database dumps [3][8][11][15].
+  Integrate SAFE-T1803 scenarios into red team and purple team exercises, followed by exfiltration techniques, focusing on how quickly defenders can detect, stop, and investigate bulk database dumps [3][8][11][14].
 
 - **Chaos and Recovery Drills.**  
   Combine SAFE-T1803 scenarios with resilience tests (e.g., “What happens if a full analytics dataset is dumped and exfiltrated?”). Validate that data-loss and breach-response playbooks are mature.
@@ -297,12 +297,7 @@ Conduct validation in isolated environments with synthetic or non-critical data:
 - **T1074 – Data Staged.**  
 - **T1041 / T1567 – Exfiltration Over C2 / Web Services.**
 
-**SAFE‑MCP (Examples):**
-
-- **SAFE‑T1101 — Command Injection.** Command injection vulnerabilities in MCP servers or connectors can provide the foothold used to spawn database utilities or high-privilege queries.  
-- **SAFE‑T1104 — Over‑Privileged Tool Abuse.** Overly broad or misconfigured MCP tools make it far easier to enact SAFE‑T1803 behaviors once a prompt/agent is compromised.  
-- **SAFE‑T1801 — Automated Data Harvesting.** Repeated, incremental harvesting overlaps with SAFE‑T1803 when automation is used to reconstruct large datasets.  
-- **SAFE‑T1910 / SAFE‑T1913 — Exfiltration Techniques.** Database dumps produced under SAFE‑T1803 often flow into HTTP/web or cloud exfiltration channels.  
+ 
 
 ---
 
@@ -317,12 +312,13 @@ Conduct validation in isolated environments with synthetic or non-critical data:
 [7] Verizon, Data Breach Investigations Reports (DBIR) – database and credential breaches. https://www.verizon.com/business/resources/reports/dbir/  
 [8] MITRE D3FEND, Data Loss Prevention & Staging Defenses. https://d3fend.mitre.org/  
 [9] OWASP, Top‑10 for Large Language Model Applications. https://owasp.org/www-project-top-10-for-large-language-model-applications/  
-[10] CISA, Best Practices for Preventing Data Exfiltration. https://www.cisa.gov/  
-[11] NSA / CISA, Securing Data in Cloud and Hybrid Environments. https://www.cisa.gov/  
+[10] CISA, “Protecting Sensitive and Personal Information from Ransomware-Caused Data Breaches,” Fact Sheet. https://www.cisa.gov/sites/default/files/publications/CISA_Fact_Sheet-Protecting_Sensitive_and_Personal_Information_from_Ransomware-Caused_Data_Breaches-508C.pdf  
+[11] NSA & CISA, “Secure Data in the Cloud,” Cybersecurity Information Sheet (CSI), March 2024.  
+https://media.defense.gov/2024/Mar/07/2003407862/-1/-1/0/CSI-CLOUDTOP10-SECURE-DATA.PDF 
 [12] MITRE ATT&CK, M1018 – User Account Management. https://attack.mitre.org/mitigations/M1018/  
-[13] OWASP GenAI Security Project. https://genai.owasp.org/  
-[14] Cloudflare, OWASP Top‑10 Risks for LLMs. https://www.cloudflare.com/learning/ai/owasp-top-10-risks-for-llms/  
-[15] Major cloud provider security blogs on data exfiltration via analytics exports and object storage misconfiguration (e.g., AWS, GCP, Azure security blogs).  
+[13] OWASP GenAI Security Project. https://owasp.org/www-project-top-10-for-large-language-model-applications/ 
+[14] Google Cloud, “4 steps to stop data exfiltration with Google Cloud.” https://cloud.google.com/blog/products/identity-security/4-steps-to-stop-data-exfiltration-with-google-cloud  
+
 
 ---
 
