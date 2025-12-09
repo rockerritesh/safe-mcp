@@ -886,10 +886,10 @@ def trigger_incident_response(alert_data):
    - Document and test playbooks for future incidents.
 
 ## Related Techniques
-- [SAFE‑T1106](../SAFE-T1106/README.md): Autonomous Loop Exploit — sustains call loops.
-- [SAFE‑T1102](../SAFE-T1102/README.md): Prompt Injection — common vector to trigger floods. ([OWASP Foundation](https://owasp.org/www-project-top-10-for-large-language-model-applications/))
-- [SAFE‑T1104](../SAFE-T1104/README.md): Over‑Privileged Tool Abuse — excessive API powers.
-- [SAFE‑T2101](../SAFE-T2101/README.md): Data Destruction — different impact class.
+- [SAFE‑T1106](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1106/README.md): Autonomous Loop Exploit — sustains call loops.
+- [SAFE‑T1102](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1102/README.md): Prompt Injection — common vector to trigger floods. ([OWASP Foundation](https://owasp.org/www-project-top-10-for-large-language-model-applications/))
+- [SAFE‑T1104](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1104/README.md): Over‑Privileged Tool Abuse — excessive API powers.
+- [SAFE‑T2101](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T2101/README.md): Data Destruction — different impact class.
 
 ## References
 - [MITRE ATT&CK — T1499 Endpoint DoS; T1499.003 Application Exhaustion Flood](https://attack.mitre.org/techniques/T1499/003/) ([MITRE ATT&CK](https://attack.mitre.org/techniques/T1499/003/))
