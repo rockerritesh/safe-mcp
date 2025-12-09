@@ -855,18 +855,18 @@ def trigger_incident_response(alert_data):
 ## Mitigation Strategies
 
 ### Preventive Controls
-1. **[SAFE‑M‑16: Token Scope Limiting](../../mitigations/SAFE-M-16/README.md)** — Strict rate limits/quotas for agent‑initiated calls; enforce both per‑session and aggregate (tenant/org) ceilings. Tie enforcement to tool and endpoint. (Aligns with OWASP API4:2023.) ([OWASP Foundation](https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/))
-2. **[SAFE‑M‑21: Output Context Isolation](../../mitigations/SAFE-M-21/README.md)** — Separate planning from execution; prohibit direct propagation of unvetted instructions from tool outputs into call loops. ([OWASP Foundation](https://owasp.org/www-project-top-10-for-large-language-model-applications/))
-3. **[SAFE‑M‑22: Semantic Output Validation](../../mitigations/SAFE-M-22/README.md)** — Pre‑execute checks that detect flood‑like plans (e.g., "call N=10,000 endpoints quickly").
-4. **[SAFE‑M‑3: AI‑Powered Content Analysis](../../mitigations/SAFE-M-3/README.md)** — Classify intent to flood APIs; block or down‑score risky plans. ([OWASP Foundation](https://owasp.org/www-project-top-10-for-large-language-model-applications/))
+1. **[SAFE‑M‑16: Token Scope Limiting](https://github.com/SAFE-MCP/safe-mcp/blob/main/mitigations/SAFE-M-16/README.md)** — Strict rate limits/quotas for agent‑initiated calls; enforce both per‑session and aggregate (tenant/org) ceilings. Tie enforcement to tool and endpoint. (Aligns with OWASP API4:2023.) ([OWASP Foundation](https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/))
+2. **[SAFE‑M‑21: Output Context Isolation](https://github.com/SAFE-MCP/safe-mcp/blob/main/mitigations/SAFE-M-21/README.md)** — Separate planning from execution; prohibit direct propagation of unvetted instructions from tool outputs into call loops. ([OWASP Foundation](https://owasp.org/www-project-top-10-for-large-language-model-applications/))
+3. **[SAFE‑M‑22: Semantic Output Validation](https://github.com/SAFE-MCP/safe-mcp/blob/main/mitigations/SAFE-M-22/README.md)** — Pre‑execute checks that detect flood‑like plans (e.g., "call N=10,000 endpoints quickly").
+4. **[SAFE‑M‑3: AI‑Powered Content Analysis](https://github.com/SAFE-MCP/safe-mcp/blob/main/mitigations/SAFE-M-3/README.md)** — Classify intent to flood APIs; block or down‑score risky plans. ([OWASP Foundation](https://owasp.org/www-project-top-10-for-large-language-model-applications/))
 5. **API Call Budgets** — Per‑session/time‑window budgets with hard cutoffs; auto‑terminate or require human approval on exceed.
 6. **Request Throttling** — Enforce max RPS per agent; degrade gracefully (token bucket/leaky‑bucket). (HTTP 429 semantics per RFC 6585.) ([IETF Datatracker](https://datatracker.ietf.org/doc/html/rfc6585))
 7. **Whitelist‑Based API Access** — Allow only approved domains/paths; blacklist high‑cost endpoints.
 
 ### Detective Controls
-1. **[SAFE‑M‑11: Behavioral Monitoring](../../mitigations/SAFE-M-11/README.md)** — Real‑time detection of anomalous volumes/fan‑outs per agent/tool/endpoint.
-2. **[SAFE‑M‑20: Anomaly Detection](../../mitigations/SAFE-M-20/README.md)** — ML baselines for RPS and concurrency across agents.
-3. **[SAFE‑M‑12: Audit Logging](../../mitigations/SAFE-M-12/README.md)** — Comprehensive logs of agent calls (endpoint, parameters, status, cost, retry metadata).
+1. **[SAFE‑M‑11: Behavioral Monitoring](https://github.com/SAFE-MCP/safe-mcp/blob/main/mitigations/SAFE-M-11/README.md)** — Real‑time detection of anomalous volumes/fan‑outs per agent/tool/endpoint.
+2. **[SAFE‑M‑20: Anomaly Detection](https://github.com/SAFE-MCP/safe-mcp/blob/main/mitigations/SAFE-M-20/README.md)** — ML baselines for RPS and concurrency across agents.
+3. **[SAFE‑M‑12: Audit Logging](https://github.com/SAFE-MCP/safe-mcp/blob/main/mitigations/SAFE-M-12/README.md)** — Comprehensive logs of agent calls (endpoint, parameters, status, cost, retry metadata).
 4. **Cost Monitoring** — Real‑time alerts on spend anomalies for metered APIs.
 5. **External API Health Monitoring** — Synthetics + SLOs; correlate agent windows with external degradation.
 
