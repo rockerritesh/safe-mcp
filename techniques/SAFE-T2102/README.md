@@ -908,4 +908,4 @@ def trigger_incident_response(alert_data):
 | Version | Date | Changes | Author |
 |---------|------|---------|--------|
 | 1.0 | 2025-11-09 | Deepened sources; verified First Observed status; added ATT&CK/OWASP/RFC citations and analog MCP‑adjacent case | Pritika Bista |
-| 1.1 | 2025-01-27 | Added comprehensive Observability & Monitoring section with metrics, dashboards, platform integrations (Prometheus, Datadog, Splunk, ELK), cost monitoring, SLO/SLI definitions, and log analysis patterns | Satbir Singh |
+| 1.1 | 2025-12-09 | Added comprehensive Observability & Monitoring section with metrics, dashboards, platform integrations (Prometheus, Datadog, Splunk, ELK), cost monitoring, SLO/SLI definitions, and log analysis patterns | Satbir Singh |
