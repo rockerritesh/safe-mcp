@@ -166,6 +166,6 @@ tags:
 ## Version History
 | Version | Date | Changes | Author |
 |---------|------|---------|--------|
-| 1.0 | 2025-11-29 | Initial documentation of chat-based backchannel technique and example Sigma rule | Pritika Bista |
+| 2.0 | 2025-12-19 | Initial documentation of chat-based backchannel technique and example Sigma rule | Pritika Bista |
 
 
