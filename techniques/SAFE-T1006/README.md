@@ -170,14 +170,8 @@ The following references include direct links. Entries without an explicit URL w
 - [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
 
 ## Version History
-- Version	Date	Changes	Author
-- 1.0	2025-11-15	Initial write-up in the improved format	rajivsthh
-MCPTox Benchmark: MCPTox: A Benchmark for Tool Poisoning Attack on Real-World MCP Servers (arXiv) (arxiv.org
-)
+| Version | Date       | Changes                                                                 | Author     |
+|--------:|------------|-------------------------------------------------------------------------|------------|
+| 1.0     | 2025-11-15 | Initial write-up in the improved format                                 | rajivsthh  |
+| 1.1     | 2025-11-16 | Reformat README to template, add Attack Flow diagram, embed example detection rule, clean references | rajivsthh  |
 
-Defensive academic framework: MCP-Guard: A Defense Framework for Model Context Protocol Integrity (arXiv) (arxiv.org
-)
-
-Version History
-Version	Date	Changes	Author
-1.0	2025-11-15	Initial write-up in the improved format	rajivsthh
