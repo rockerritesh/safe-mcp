@@ -10,6 +10,20 @@ Capability Mapping is an adaptation of MITRE ATT&CK’s Discovery tactic (TA0007
 
 Armed with this intelligence, the attacker quickly prioritizes follow-on actions. Because responses often include parameters, guardrails, and sample payloads, Capability Mapping drastically shortens the path to privilege escalation or data theft compared with traditional trial-and-error reconnaissance.
 
+### Capability Mapping as LLM-Native Reconnaissance
+
+Capability Mapping in MCP environments mirrors traditional reconnaissance techniques, translated into an LLM and agent-tooling context. Rather than scanning hosts or ports, adversaries probe agent behavior, tool invocation paths, and registry exposure to enumerate high-value capabilities.
+
+| Traditional Reconnaissance | MCP / LLM Analog |
+| -------------------------- | ---------------- |
+| Social engineering | Prompt framing such as “I heard this agent can deploy infrastructure.” |
+| Network scanning | Observing which tools are invoked and how failures manifest. |
+| Service discovery | Probing available MCP registries, plugins, or tool namespaces. |
+| OS fingerprinting | Testing guardrails, sandbox limits, or execution constraints. |
+| User / group enumeration | Asking whether different users or roles have access to different tools. |
+
+This reconnaissance phase materially reduces attacker uncertainty and accelerates follow-on exploitation of privileged automations.
+
 ## How It Works
 
 1. Ask meta-questions (“summarize your API surface,” “which tools are enabled right now?”) to elicit structured tool manifests.  
@@ -38,6 +52,22 @@ How defenders can identify this attack:
 - **Monitoring strategies**: instrument prompt telemetry for enumeration phrases, correlate with RBAC context, and alert when low-privilege users ask for privileged tool descriptions.
 - **Detection assets**: the Sigma-style rule in [detection-rule.yml](./detection-rule.yml) flags early-session capability-enumeration prompts aligned with TA0007/T1592, and the lightweight harness [test_detection_rule.py](./test_detection_rule.py) plus sample logs ([test-logs.json](./test-logs.json)) help validate the rule against both malicious and benign scenarios.
 
+#### Additional Capability Enumeration Scenarios
+
+- **Progressive probing** – a sequence of partial or seemingly benign questions that converge on a complete capability map over multiple interactions.
+- **Indirect enumeration** – queries framed as best-practice, limitations, or comparisons rather than explicit requests for tool lists.
+- **Registry inference** – prompts that imply prior knowledge of MCP registry structure or naming conventions to elicit confirmation from the agent.
+
+### Note on Detection Assets
+
+The detection rules and executable harness included with SAFE-T1605 are **illustrative reference implementations**, not production-tuned signatures. They are intended to demonstrate *observable patterns* of capability enumeration behavior rather than prescribe fixed thresholds or phrases.
+
+Real-world deployments **should**:
+
+- Tune thresholds based on baseline agent usage.
+- Adapt phrase matching to domain-specific language.
+- Correlate signals over time rather than rely on single prompts.
+
 ## Mitigation
 
 How to prevent or minimize this attack:
@@ -57,6 +87,8 @@ How to prevent or minimize this attack:
 - [OWASP Input Validation Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html)
 - [NIST SP 800-53 Rev. 5, Update 1 (AU-6, SI-4, AC-6)](https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final)
 - [Invariant Labs: MCP Safety Audit Research](https://arxiv.org/abs/2504.03767)
+
+SAFE-T1605 also aligns with reconnaissance concepts from MITRE ATT&CK adversary emulation, adapted for LLM-mediated and agent-orchestrated systems.
 
 ## MITRE ATT&CK Mapping
 
