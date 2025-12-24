@@ -77,7 +77,7 @@ User copies the response into another system where the payload is parsed, execut
 ### Post-Exfiltration
 Payload exfiltrates sensitive data or establishes covert channels.
 ### Post-Exploitation
-Payload exfiltrates confidential data back to an attacker-controlled channel or establishes persistence.
+Payload exfiltrates confidential data back to an attacker-controllaed channel or establishes persistence.
 
 ## Example Scenario
 
