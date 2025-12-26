@@ -94,3 +94,8 @@ SAFE-T1605 also aligns with reconnaissance concepts from MITRE ATT&CK adversary 
 
 ATT&CK Technique: T1592 – Gather Victim Host Information  
 ATT&CK Tactic: Discovery (TA0007)
+
+## Version History
+| Version | Date | Changes | Author |
+|---------|------|---------|--------|
+| 1.0 | 2025-12-25 | Initial documentation of Capability Mapping technique | Umesh Rawat |
