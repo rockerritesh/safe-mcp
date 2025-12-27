@@ -1,5 +1,5 @@
 
- # SAFE‑T1006: User‑Social‑Engineering Install (Improved)
+# SAFE‑T1006: User‑Social‑Engineering Install (Improved)
 ## Overview
 
 Tactic: Initial Access (ATK-TA0001)
@@ -27,7 +27,6 @@ Primary Vector: Phishing / Social Engineering (developer- or operator-facing mes
 
 Secondary Vectors:
 
-
 - Registry Poisoning / Typosquatting: Upload a malicious tool to a popular package registry (npm, PyPI, etc.) with a name that is very similar to a legitimate tool.
 
 - Supply-Chain Compromise: Compromise a legitimate tool’s repository or CI pipeline to insert trojan code.
@@ -35,7 +34,6 @@ Secondary Vectors:
 - Compromised Installer: Distribute a malicious installer that looks official but includes post-install code for persistence / MCP registration.
 
 ## Technical Details
-
 
 ### Prerequisites
 
@@ -48,8 +46,8 @@ Secondary Vectors:
 - The victim’s MCP client (or system) must trust newly registered tools / agents without strict verification.
 
 ## Attack Flow
-
 Here’s a Mermaid diagram to illustrate:
+
 ### Initial Stage
 
 - Attacker prepares a trojanized package or installer embedding post-install behavior (MCP registration, agent, persistence).
@@ -79,7 +77,6 @@ flowchart TD
   F --> H["Agent beacons to C2"]
   G --> I["Data exfiltration or lateral movement"]
 ```
-
 ## Attack Steps
 
 - **Prepare**: Attacker builds a malicious installer or package embedding the malicious post-install behavior (MCP registration or agent).
@@ -182,6 +179,7 @@ Not observed as a single, widely-distributed production campaign specific to MCP
 - **Install Behavior Monitoring** — Monitor post-install behavior: services, cron jobs, agents.
 
 - **Network Monitoring** — Track unexpected inbound/outbound connections from newly installed agents / tools.
+
 ## Detection Rules
 
 **WARNING:** Detection rules below are examples only — tune field names, thresholds, and logic to your environment. Do not deploy without validation.
