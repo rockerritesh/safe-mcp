@@ -1,5 +1,5 @@
-# SAFE‑T1006: User‑Social‑Engineering Install (Improved)
 
+ # SAFE‑T1006: User‑Social‑Engineering Install (Improved)
 ## Overview
 
 Tactic: Initial Access (ATK-TA0001)
@@ -12,6 +12,13 @@ Last Updated: 2025-11-15
 
 User‑Social‑Engineering Install is a technique in which an attacker persuades a user (developer, operator, or admin) to install a seemingly legitimate package or installer, but which is actually malicious (trojanized). In the MCP context, this can take the form of a package, installer, or tool that—once installed—registers itself with an MCP server or agent, giving the attacker persistent and powerful access.
 
+
+Because MCP tools can request high-privilege capabilities (like file access, execution, or network), a poisoned installer or package can be extremely dangerous: once installed, it can register a tool or agent that is controlled by the attacker, allowing data exfiltration, remote execution, or persistence.
+
+## Attack Vectors
+
+- Phishing / Social Engineering: Trick a user (developer, admin) into installing a malicious package or binary.
+
 Because MCP tools can request high-privilege capabilities (like file access, execution, or network), a poisoned installer or package can result in high-severity compromise: once installed, it can register a tool or agent that is controlled by the attacker, allowing data exfiltration, remote execution, or persistence.
 
 ## Attack Vectors
@@ -20,6 +27,7 @@ Primary Vector: Phishing / Social Engineering (developer- or operator-facing mes
 
 Secondary Vectors:
 
+
 - Registry Poisoning / Typosquatting: Upload a malicious tool to a popular package registry (npm, PyPI, etc.) with a name that is very similar to a legitimate tool.
 
 - Supply-Chain Compromise: Compromise a legitimate tool’s repository or CI pipeline to insert trojan code.
@@ -27,6 +35,7 @@ Secondary Vectors:
 - Compromised Installer: Distribute a malicious installer that looks official but includes post-install code for persistence / MCP registration.
 
 ## Technical Details
+
 
 ### Prerequisites
 
@@ -40,6 +49,7 @@ Secondary Vectors:
 
 ## Attack Flow
 
+Here’s a Mermaid diagram to illustrate:
 ### Initial Stage
 
 - Attacker prepares a trojanized package or installer embedding post-install behavior (MCP registration, agent, persistence).
@@ -69,6 +79,22 @@ flowchart TD
   F --> H["Agent beacons to C2"]
   G --> I["Data exfiltration or lateral movement"]
 ```
+
+## Attack Steps
+
+- **Prepare**: Attacker builds a malicious installer or package embedding the malicious post-install behavior (MCP registration or agent).
+
+- **Distribute**: The package is distributed via phishing emails, social media, or through a public registry via typosquatting.
+
+- **Install**: A user (developer / operator) runs the installer or imports the package, triggering the post-install code.
+
+- **Register & Persist**: The post-install logic registers a malicious tool with an MCP server (with manifest pointing to attacker-controlled server) and/or installs a background agent.
+
+- **Activate**: The attacker triggers the registered tool remotely (via the MCP protocol) or uses a persistent agent to run commands.
+
+- **Exploit / Exfiltrate**: Sensitive data (tokens, files, credentials) is exfiltrated, or further persistence is established.
+
+## Advanced Techniques & Variations
 
 ## Attack Flow (numbered stages)
 
@@ -137,6 +163,25 @@ Not observed as a single, widely-distributed production campaign specific to MCP
 
 - Validate tool manifests: check that manifest URLs are from trusted domains; verify integrity (e.g., digital signature).
 
+## Mitigation Strategies
+
+### Preventive Controls
+
+- **Signed Packages & Installers** — Require cryptographic signing of installers / packages.
+
+- **Allowlist Package Sources** — Only allow installation from trusted registries or domains.
+
+- **Manual Tool Approval** — Require human / security review before tools are registered with MCP in production.
+
+- **Sandboxed Installation / Review** — Test new tools in isolated environments before allowing them in production.
+
+### Detective Controls
+
+- **Tool Registration Monitoring** — Audit and alert on newly registered tools.
+
+- **Install Behavior Monitoring** — Monitor post-install behavior: services, cron jobs, agents.
+
+- **Network Monitoring** — Track unexpected inbound/outbound connections from newly installed agents / tools.
 ## Detection Rules
 
 **WARNING:** Detection rules below are examples only — tune field names, thresholds, and logic to your environment. Do not deploy without validation.
