@@ -241,205 +241,7 @@ tags:
 
 Effective observability is critical for detecting and responding to API flooding attacks. This section provides practical guidance for implementing comprehensive monitoring, metrics collection, and alerting strategies.
 
-### Key Metrics to Monitor
-
-Organizations should instrument their MCP deployments to track the following metrics:
-
-#### Request Volume Metrics
-- **Requests Per Second (RPS)** by agent, session, tool, and endpoint
-- **Total Request Count** over time windows (1m, 5m, 15m, 1h)
-- **Request Rate Growth** (rate of change in RPS)
-- **Concurrent Request Count** (active in-flight requests)
-
-#### Error Rate Metrics
-- **HTTP 429 Rate** (rate limit errors per second)
-- **HTTP 5xx Rate** (server errors per second)
-- **Error Rate Percentage** (errors / total requests)
-- **Retry Attempt Count** (number of retries per request)
-
-#### Cost Metrics
-- **API Cost Per Request** (for metered APIs)
-- **Total Cost Per Session** (cumulative cost per agent session)
-- **Cost Per Time Window** (hourly, daily spending)
-- **Cost Anomaly Score** (deviation from baseline)
-
-#### Performance Metrics
-- **API Response Time** (p50, p95, p99 latencies)
-- **Request Timeout Rate** (requests exceeding timeout thresholds)
-- **External API Health Status** (availability percentage)
-- **Circuit Breaker State** (open/closed/half-open)
-
 ### Observability Platform Integration Examples
-
-#### Prometheus Metrics Export
-
-```python
-from prometheus_client import Counter, Histogram, Gauge
-import time
-
-# Define metrics
-api_requests_total = Counter(
-    'mcp_agent_api_requests_total',
-    'Total number of API requests',
-    ['agent_id', 'session_id', 'tool_name', 'endpoint', 'status_code']
-)
-
-api_request_duration = Histogram(
-    'mcp_agent_api_request_duration_seconds',
-    'API request duration in seconds',
-    ['agent_id', 'endpoint']
-)
-
-api_cost_total = Counter(
-    'mcp_agent_api_cost_total',
-    'Total API cost in currency units',
-    ['agent_id', 'session_id', 'api_provider']
-)
-
-rate_limit_errors = Counter(
-    'mcp_agent_rate_limit_errors_total',
-    'Total rate limit errors (HTTP 429)',
-    ['agent_id', 'session_id', 'endpoint']
-)
-
-concurrent_requests = Gauge(
-    'mcp_agent_concurrent_requests',
-    'Number of concurrent API requests',
-    ['agent_id']
-)
-
-def record_api_call(agent_id, session_id, tool_name, endpoint, status_code, duration, cost=0):
-    """Record an API call for observability"""
-    api_requests_total.labels(
-        agent_id=agent_id,
-        session_id=session_id,
-        tool_name=tool_name,
-        endpoint=endpoint,
-        status_code=status_code
-    ).inc()
-    
-    api_request_duration.labels(
-        agent_id=agent_id,
-        endpoint=endpoint
-    ).observe(duration)
-    
-    if cost > 0:
-        api_cost_total.labels(
-            agent_id=agent_id,
-            session_id=session_id,
-            api_provider=extract_provider(endpoint)
-        ).inc(cost)
-    
-    if status_code == 429:
-        rate_limit_errors.labels(
-            agent_id=agent_id,
-            session_id=session_id,
-            endpoint=endpoint
-        ).inc()
-```
-
-#### Prometheus Alerting Rules
-
-```yaml
-groups:
-  - name: mcp_api_flooding
-    interval: 30s
-    rules:
-      - alert: HighAPICallRate
-        expr: |
-          rate(mcp_agent_api_requests_total[5m]) > 100
-        for: 2m
-        labels:
-          severity: warning
-        annotations:
-          summary: "High API call rate detected"
-          description: "Agent {{ $labels.agent_id }} is making {{ $value }} requests/sec"
-      
-      - alert: RateLimitErrorsSpike
-        expr: |
-          rate(mcp_agent_rate_limit_errors_total[5m]) > 10
-        for: 1m
-        labels:
-          severity: critical
-        annotations:
-          summary: "Rate limit errors spiking"
-          description: "Agent {{ $labels.agent_id }} receiving {{ $value }} 429 errors/sec"
-      
-      - alert: CostAnomaly
-        expr: |
-          rate(mcp_agent_api_cost_total[1h]) > 1000
-        for: 5m
-        labels:
-          severity: critical
-        annotations:
-          summary: "Unusual API cost detected"
-          description: "Session {{ $labels.session_id }} has cost ${{ $value }} in the last hour"
-      
-      - alert: ExponentialRequestGrowth
-        expr: |
-          (
-            rate(mcp_agent_api_requests_total[5m]) /
-            rate(mcp_agent_api_requests_total[15m] offset 5m)
-          ) > 3
-        for: 2m
-        labels:
-          severity: warning
-        annotations:
-          summary: "Exponential request growth detected"
-          description: "Agent {{ $labels.agent_id }} request rate increased 3x in 5 minutes"
-```
-
-#### Grafana Dashboard Configuration
-
-```json
-{
-  "dashboard": {
-    "title": "MCP API Flooding Detection",
-    "panels": [
-      {
-        "title": "Requests Per Second",
-        "targets": [
-          {
-            "expr": "sum(rate(mcp_agent_api_requests_total[5m])) by (agent_id)",
-            "legendFormat": "{{agent_id}}"
-          }
-        ],
-        "type": "graph"
-      },
-      {
-        "title": "Rate Limit Errors (429)",
-        "targets": [
-          {
-            "expr": "sum(rate(mcp_agent_rate_limit_errors_total[5m])) by (endpoint)",
-            "legendFormat": "{{endpoint}}"
-          }
-        ],
-        "type": "graph"
-      },
-      {
-        "title": "API Cost Over Time",
-        "targets": [
-          {
-            "expr": "sum(rate(mcp_agent_api_cost_total[1h])) by (session_id)",
-            "legendFormat": "Session {{session_id}}"
-          }
-        ],
-        "type": "graph"
-      },
-      {
-        "title": "Top Agents by Request Volume",
-        "targets": [
-          {
-            "expr": "topk(10, sum(rate(mcp_agent_api_requests_total[5m])) by (agent_id))",
-            "legendFormat": "{{agent_id}}"
-          }
-        ],
-        "type": "table"
-      }
-    ]
-  }
-}
-```
 
 #### Datadog Integration Example
 
@@ -717,156 +519,21 @@ class APICostTracker:
         return dict(endpoint_costs)
 ```
 
-### Log Analysis Patterns
-
-#### Pattern Detection Queries
-
-```python
-import re
-from collections import Counter
-from datetime import datetime, timedelta
-
-def analyze_logs_for_flooding(logs, time_window_minutes=5):
-    """Analyze logs to detect API flooding patterns"""
-    
-    # Parse logs and extract relevant fields
-    parsed_logs = []
-    for log in logs:
-        try:
-            entry = json.loads(log) if isinstance(log, str) else log
-            parsed_logs.append({
-                'timestamp': datetime.fromisoformat(entry['timestamp']),
-                'session_id': entry.get('session_id'),
-                'tool_name': entry.get('tool_name'),
-                'endpoint': entry.get('endpoint'),
-                'status_code': entry.get('status_code'),
-                'retry_count': entry.get('retry_count', 0)
-            })
-        except (json.JSONDecodeError, KeyError):
-            continue
-    
-    # Group by time window
-    cutoff = datetime.now() - timedelta(minutes=time_window_minutes)
-    recent_logs = [log for log in parsed_logs if log['timestamp'] > cutoff]
-    
-    # Detect patterns
-    patterns = {
-        'high_volume': detect_high_volume(recent_logs),
-        'rate_limit_errors': detect_rate_limit_errors(recent_logs),
-        'retry_loops': detect_retry_loops(recent_logs),
-        'parallel_execution': detect_parallel_execution(recent_logs),
-        'cost_anomalies': detect_cost_anomalies(recent_logs)
-    }
-    
-    return patterns
-
-def detect_high_volume(logs, threshold=100):
-    """Detect sessions with unusually high request volume"""
-    session_counts = Counter(log['session_id'] for log in logs)
-    return {
-        session_id: count
-        for session_id, count in session_counts.items()
-        if count > threshold
-    }
-
-def detect_rate_limit_errors(logs, threshold=10):
-    """Detect sessions with excessive rate limit errors"""
-    rate_limit_logs = [
-        log for log in logs
-        if log.get('status_code') == 429
-    ]
-    session_429_counts = Counter(log['session_id'] for log in rate_limit_logs)
-    return {
-        session_id: count
-        for session_id, count in session_429_counts.items()
-        if count > threshold
-    }
-
-def detect_retry_loops(logs, threshold=5):
-    """Detect sessions with excessive retry attempts"""
-    retry_logs = [
-        log for log in logs
-        if log.get('retry_count', 0) > threshold
-    ]
-    return {
-        log['session_id']: log['retry_count']
-        for log in retry_logs
-    }
-
-def detect_parallel_execution(logs, threshold=10):
-    """Detect parallel execution patterns"""
-    # Group by timestamp (within 1 second) and session
-    time_groups = defaultdict(list)
-    for log in logs:
-        time_key = log['timestamp'].replace(microsecond=0)
-        time_groups[(time_key, log['session_id'])].append(log)
-    
-    parallel_sessions = {}
-    for (time_key, session_id), group_logs in time_groups.items():
-        if len(group_logs) > threshold:
-            parallel_sessions[session_id] = len(group_logs)
-    
-    return parallel_sessions
-```
-
-### Alerting Best Practices
-
-1. **Multi-Level Alerting**: Implement warning, critical, and emergency alert levels based on severity
-2. **Alert Fatigue Prevention**: Use intelligent grouping to avoid alert storms
-3. **Context-Rich Alerts**: Include relevant context (session ID, endpoint, cost, request count) in alerts
-4. **Automated Response**: Integrate alerts with automated response systems (throttling, session termination)
-5. **Alert Correlation**: Correlate API flooding alerts with external API health metrics
-
-### Integration with Incident Response
-
-Observability data should feed directly into incident response workflows:
-
-```python
-def trigger_incident_response(alert_data):
-    """Trigger automated incident response based on observability alerts"""
-    
-    severity = alert_data['severity']
-    session_id = alert_data['session_id']
-    
-    if severity == 'critical':
-        # Immediate actions
-        throttle_session(session_id, rate_limit=10)  # Reduce to 10 RPS
-        notify_security_team(alert_data)
-        
-        # If cost exceeds threshold, suspend session
-        if alert_data.get('cost', 0) > 1000:
-            suspend_session(session_id)
-    
-    elif severity == 'warning':
-        # Monitor and alert
-        increase_monitoring(session_id)
-        notify_oncall(alert_data)
-    
-    # Log incident for post-mortem
-    log_incident({
-        'timestamp': datetime.now(),
-        'session_id': session_id,
-        'alert_type': 'api_flooding',
-        'metrics': alert_data['metrics'],
-        'actions_taken': alert_data.get('actions', [])
-    })
-```
-
 ## Mitigation Strategies
 
 ### Preventive Controls
-1. **[SAFE‑M‑16: Token Scope Limiting](https://github.com/SAFE-MCP/safe-mcp/blob/main/mitigations/SAFE-M-16/README.md)** — Strict rate limits/quotas for agent‑initiated calls; enforce both per‑session and aggregate (tenant/org) ceilings. Tie enforcement to tool and endpoint. (Aligns with OWASP API4:2023.) ([OWASP Foundation](https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/))
-2. **[SAFE‑M‑21: Output Context Isolation](https://github.com/SAFE-MCP/safe-mcp/blob/main/mitigations/SAFE-M-21/README.md)** — Separate planning from execution; prohibit direct propagation of unvetted instructions from tool outputs into call loops. ([OWASP Foundation](https://owasp.org/www-project-top-10-for-large-language-model-applications/))
-3. **[SAFE‑M‑22: Semantic Output Validation](https://github.com/SAFE-MCP/safe-mcp/blob/main/mitigations/SAFE-M-22/README.md)** — Pre‑execute checks that detect flood‑like plans (e.g., "call N=10,000 endpoints quickly").
-4. **[SAFE‑M‑3: AI‑Powered Content Analysis](https://github.com/SAFE-MCP/safe-mcp/blob/main/mitigations/SAFE-M-3/README.md)** — Classify intent to flood APIs; block or down‑score risky plans. ([OWASP Foundation](https://owasp.org/www-project-top-10-for-large-language-model-applications/))
+1. **[SAFE‑M‑16: Token Scope Limiting](../../mitigations/SAFE-M-16/README.md)** — Strict rate limits/quotas for agent‑initiated calls; enforce both per‑session and aggregate (tenant/org) ceilings. Tie enforcement to tool and endpoint. (Aligns with OWASP API4:2023.) ([OWASP Foundation](https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/))
+2. **[SAFE‑M‑21: Output Context Isolation](../../mitigations/SAFE-M-21/README.md)** — Separate planning from execution; prohibit direct propagation of unvetted instructions from tool outputs into call loops. ([OWASP Foundation](https://owasp.org/www-project-top-10-for-large-language-model-applications/))
+3. **[SAFE‑M‑22: Semantic Output Validation](../../mitigations/SAFE-M-22/README.md)** — Pre‑execute checks that detect flood‑like plans (e.g., "call N=10,000 endpoints quickly").
+4. **[SAFE‑M‑3: AI‑Powered Content Analysis](../../mitigations/SAFE-M-3/README.md)** — Classify intent to flood APIs; block or down‑score risky plans. ([OWASP Foundation](https://owasp.org/www-project-top-10-for-large-language-model-applications/))
 5. **API Call Budgets** — Per‑session/time‑window budgets with hard cutoffs; auto‑terminate or require human approval on exceed.
 6. **Request Throttling** — Enforce max RPS per agent; degrade gracefully (token bucket/leaky‑bucket). (HTTP 429 semantics per RFC 6585.) ([IETF Datatracker](https://datatracker.ietf.org/doc/html/rfc6585))
 7. **Whitelist‑Based API Access** — Allow only approved domains/paths; blacklist high‑cost endpoints.
 
 ### Detective Controls
-1. **[SAFE‑M‑11: Behavioral Monitoring](https://github.com/SAFE-MCP/safe-mcp/blob/main/mitigations/SAFE-M-11/README.md)** — Real‑time detection of anomalous volumes/fan‑outs per agent/tool/endpoint.
-2. **[SAFE‑M‑20: Anomaly Detection](https://github.com/SAFE-MCP/safe-mcp/blob/main/mitigations/SAFE-M-20/README.md)** — ML baselines for RPS and concurrency across agents.
-3. **[SAFE‑M‑12: Audit Logging](https://github.com/SAFE-MCP/safe-mcp/blob/main/mitigations/SAFE-M-12/README.md)** — Comprehensive logs of agent calls (endpoint, parameters, status, cost, retry metadata).
+1. **[SAFE‑M‑11: Behavioral Monitoring](../../mitigations/SAFE-M-11/README.md)** — Real‑time detection of anomalous volumes/fan‑outs per agent/tool/endpoint.
+2. **[SAFE‑M‑20: Anomaly Detection](../../mitigations/SAFE-M-20/README.md)** — ML baselines for RPS and concurrency across agents.
+3. **[SAFE‑M‑12: Audit Logging](../../mitigations/SAFE-M-12/README.md)** — Comprehensive logs of agent calls (endpoint, parameters, status, cost, retry metadata).
 4. **Cost Monitoring** — Real‑time alerts on spend anomalies for metered APIs.
 5. **External API Health Monitoring** — Synthetics + SLOs; correlate agent windows with external degradation.
 
@@ -886,10 +553,10 @@ def trigger_incident_response(alert_data):
    - Document and test playbooks for future incidents.
 
 ## Related Techniques
-- [SAFE‑T1106](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1106/README.md): Autonomous Loop Exploit — sustains call loops.
-- [SAFE‑T1102](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1102/README.md): Prompt Injection — common vector to trigger floods. ([OWASP Foundation](https://owasp.org/www-project-top-10-for-large-language-model-applications/))
-- [SAFE‑T1104](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T1104/README.md): Over‑Privileged Tool Abuse — excessive API powers.
-- [SAFE‑T2101](https://github.com/SAFE-MCP/safe-mcp/blob/main/techniques/SAFE-T2101/README.md): Data Destruction — different impact class.
+- [SAFE‑T1106](../SAFE-T1106/README.md): Autonomous Loop Exploit — sustains call loops.
+- [SAFE‑T1102](../SAFE-T1102/README.md): Prompt Injection — common vector to trigger floods. ([OWASP Foundation](https://owasp.org/www-project-top-10-for-large-language-model-applications/))
+- [SAFE‑T1104](../SAFE-T1104/README.md): Over‑Privileged Tool Abuse — excessive API powers.
+- [SAFE‑T2101](../SAFE-T2101/README.md): Data Destruction — different impact class.
 
 ## References
 - [MITRE ATT&CK — T1499 Endpoint DoS; T1499.003 Application Exhaustion Flood](https://attack.mitre.org/techniques/T1499/003/) ([MITRE ATT&CK](https://attack.mitre.org/techniques/T1499/003/))
@@ -908,4 +575,5 @@ def trigger_incident_response(alert_data):
 | Version | Date | Changes | Author |
 |---------|------|---------|--------|
 | 1.0 | 2025-11-09 | Deepened sources; verified First Observed status; added ATT&CK/OWASP/RFC citations and analog MCP‑adjacent case | Pritika Bista |
-| 1.1 | 2025-12-09 | Added comprehensive Observability & Monitoring section with metrics, dashboards, platform integrations (Prometheus, Datadog, Splunk, ELK), cost monitoring, SLO/SLI definitions, and log analysis patterns | Satbir Singh |
+| 1.3 | 2025-12-09 | Added SLO/SLI definitions and cost monitoring implementation examples | Satbir Singh |
+| 1.2 | 2025-12-09 | Added platform integration examples for Datadog, Splunk, and ELK Stack | Satbir Singh |
