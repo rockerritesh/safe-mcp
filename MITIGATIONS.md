@@ -63,29 +63,42 @@ SAFE-MCP mitigations are security controls designed to protect Model Context Pro
 | [SAFE-M-35](mitigations/SAFE-M-35/README.md) | Adversarial Training Data Detection | AI-Based Defense | Medium-High |
 | [SAFE-M-36](mitigations/SAFE-M-36/README.md) | Model Behavior Monitoring | Detective Control | Medium-High |
 | [SAFE-M-29](mitigations/SAFE-M-29/README.md) | Explicit Privilege Boundaries | Architectural Control | High |
+| [SAFE-M-37](mitigations/SAFE-M-37/README.md) | Metadata Sanitization | Input Validation | High |
+| [SAFE-M-38](mitigations/SAFE-M-38/README.md) | Schema Validation | Input Validation | Medium-High |
+| [SAFE-M-39](mitigations/SAFE-M-39/README.md) | Prompt Context Validation | Architectural Control | High |
+| [SAFE-M-40](mitigations/SAFE-M-40/README.md) | Clear UI Patterns | UI Security | Medium-High |
+| [SAFE-M-41](mitigations/SAFE-M-41/README.md) | Tool and Package Pinning | Supply Chain Control | High |
+| [SAFE-M-42](mitigations/SAFE-M-42/README.md) | Cross-Server Protection | Architectural Control | High |
+| [SAFE-M-43](mitigations/SAFE-M-43/README.md) | Steganography Scanner | Detective Control | Medium-High |
+| [SAFE-M-44](mitigations/SAFE-M-44/README.md) | Behavioural Monitoring | Detective Control | Medium-High |
+| [SAFE-M-45](mitigations/SAFE-M-45/README.md) | Tool Manifest Signing & Server Attestation | Supply Chain Security | High |
+| [SAFE-M-46](mitigations/SAFE-M-46/README.md) | Bridge Risk Management | Preventive Control | High |
+| [SAFE-M-47](mitigations/SAFE-M-47/README.md) | Cross-Chain Transaction Graph Analysis | Detective Control | High |
+| [SAFE-M-48](mitigations/SAFE-M-48/README.md) | Custodial Off-Ramp Monitoring | Detective Control | Medium-High |
+
 
 ## Summary Statistics
 
-- **Total Mitigations**: 35
-- **High Effectiveness**: 18 (51%)
-- **Medium-High Effectiveness**: 10 (29%)
-- **Medium Effectiveness**: 7 (20%)
+- **Total Mitigations**: 47
+- **High Effectiveness**: 26 (55%)
+- **Medium-High Effectiveness**: 15 (32%)
+- **Medium Effectiveness**: 6 (13%)
 - **Low Effectiveness**: 0 (0%)
 
 ## Category Distribution
 
 | Category | Number of Mitigations |
 |----------|---------------------|
-| Detective Control | 8 |
-| Preventive Control | 6 |
-| Input Validation | 4 |
+| Detective Control | 12 |
+| Preventive Control | 7 |
+| Input Validation | 6 |
 | Cryptographic Control | 3 |
 | Architectural Defense | 2 |
-| UI Security | 2 |
+| UI Security | 3 |
 | AI-Based Defense | 2 |
-| Supply Chain Security | 2 |
+| Supply Chain Security | 4 |
 | Data Security | 2 |
-| Architectural Control | 2 |
+| Architectural Control | 4 |
 | Isolation and Containment | 1 |
 | Risk Management | 1 |
 | Human Factors | 1 |
