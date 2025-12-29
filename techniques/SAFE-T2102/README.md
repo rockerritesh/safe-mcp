@@ -387,6 +387,138 @@ index=mcp_logs event_type="tool_execution"
 }
 ```
 
+### Service Level Objectives (SLOs) and Indicators (SLIs)
+
+Define SLOs to establish acceptable thresholds for API usage:
+
+#### Recommended SLOs
+
+```yaml
+slo_definitions:
+  - name: api_request_rate_slo
+    description: "API request rate should not exceed 100 RPS per agent session"
+    sli: |
+      sum(rate(mcp_agent_api_requests_total[5m])) by (session_id) < 100
+    target: 99.9%
+    window: 30d
+  
+  - name: rate_limit_error_slo
+    description: "Rate limit errors should be less than 1% of total requests"
+    sli: |
+      (
+        sum(rate(mcp_agent_rate_limit_errors_total[5m])) /
+        sum(rate(mcp_agent_api_requests_total[5m]))
+      ) < 0.01
+    target: 99.5%
+    window: 30d
+  
+  - name: api_cost_slo
+    description: "API cost per session should not exceed $100 per hour"
+    sli: |
+      sum(rate(mcp_agent_api_cost_total[1h])) by (session_id) < 100
+    target: 99.0%
+    window: 30d
+  
+  - name: external_api_availability_slo
+    description: "External API availability should be > 99.9%"
+    sli: |
+      (
+        sum(rate(mcp_agent_api_requests_total{status_code!~"5.."}[5m])) /
+        sum(rate(mcp_agent_api_requests_total[5m]))
+      ) > 0.999
+    target: 99.9%
+    window: 30d
+```
+
+### Cost Monitoring Examples
+
+#### Cost Tracking Implementation
+
+```python
+from collections import defaultdict
+from datetime import datetime, timedelta
+import json
+
+class APICostTracker:
+    """Track API costs per session and detect anomalies"""
+    
+    def __init__(self, alert_threshold=100):
+        self.costs = defaultdict(lambda: {'total': 0, 'history': []})
+        self.alert_threshold = alert_threshold
+        self.baseline_window = timedelta(hours=24)
+    
+    def record_cost(self, session_id, endpoint, cost, timestamp=None):
+        """Record API cost for a session"""
+        if timestamp is None:
+            timestamp = datetime.now()
+        
+        self.costs[session_id]['total'] += cost
+        self.costs[session_id]['history'].append({
+            'timestamp': timestamp,
+            'endpoint': endpoint,
+            'cost': cost
+        })
+        
+        # Check for anomalies
+        if self._is_cost_anomaly(session_id):
+            self._trigger_cost_alert(session_id)
+    
+    def _is_cost_anomaly(self, session_id):
+        """Detect if current cost exceeds baseline"""
+        session_costs = self.costs[session_id]
+        cutoff = datetime.now() - self.baseline_window
+        
+        # Calculate baseline (average cost per hour)
+        recent_costs = [
+            entry['cost'] for entry in session_costs['history']
+            if entry['timestamp'] > cutoff
+        ]
+        
+        if not recent_costs:
+            return False
+        
+        avg_hourly_cost = sum(recent_costs) / 24
+        current_hourly_cost = sum([
+            entry['cost'] for entry in session_costs['history']
+            if entry['timestamp'] > datetime.now() - timedelta(hours=1)
+        ])
+        
+        # Alert if current cost is 3x baseline or exceeds threshold
+        return (
+            current_hourly_cost > self.alert_threshold or
+            (avg_hourly_cost > 0 and current_hourly_cost > avg_hourly_cost * 3)
+        )
+    
+    def _trigger_cost_alert(self, session_id):
+        """Trigger alert for cost anomaly"""
+        total_cost = self.costs[session_id]['total']
+        print(f"⚠️  Cost Alert: Session {session_id} has cost ${total_cost:.2f}")
+        # Integrate with your alerting system (PagerDuty, Slack, etc.)
+    
+    def get_cost_report(self, session_id):
+        """Generate cost report for a session"""
+        if session_id not in self.costs:
+            return None
+        
+        costs = self.costs[session_id]
+        return {
+            'session_id': session_id,
+            'total_cost': costs['total'],
+            'request_count': len(costs['history']),
+            'average_cost_per_request': (
+                costs['total'] / len(costs['history']) if costs['history'] else 0
+            ),
+            'cost_by_endpoint': self._aggregate_by_endpoint(costs['history'])
+        }
+    
+    def _aggregate_by_endpoint(self, history):
+        """Aggregate costs by endpoint"""
+        endpoint_costs = defaultdict(float)
+        for entry in history:
+            endpoint_costs[entry['endpoint']] += entry['cost']
+        return dict(endpoint_costs)
+```
+
 ## Mitigation Strategies
 
 ### Preventive Controls
@@ -443,4 +575,5 @@ index=mcp_logs event_type="tool_execution"
 | Version | Date | Changes | Author |
 |---------|------|---------|--------|
 | 1.0 | 2025-11-09 | Deepened sources; verified First Observed status; added ATT&CK/OWASP/RFC citations and analog MCP‑adjacent case | Pritika Bista |
+| 1.3 | 2025-12-09 | Added SLO/SLI definitions and cost monitoring implementation examples | Satbir Singh |
 | 1.2 | 2025-12-09 | Added platform integration examples for Datadog, Splunk, and ELK Stack | Satbir Singh |
