@@ -352,4 +352,4 @@ Targeted enumeration of cloud-deployed MCP servers:
 | Version | Date | Changes | Author |
 |---------|------|---------|--------|
 | 1.0 | 2025-08-17 | Initial documentation of MCP Server Enumeration technique | rockerritesh |
-| 1.1 | 2025-01-XX | Enhanced documentation with Mermaid attack flow diagram, comprehensive citations, sub-techniques taxonomy, and improved technical depth matching SAFE-T1001 quality standard | Shashanka Ghimire|
+| 1.1 | 2025-12-28 | Enhanced documentation with Mermaid attack flow diagram, comprehensive citations, sub-techniques taxonomy, and improved technical depth matching SAFE-T1001 quality standard | Shashanka Ghimire|
